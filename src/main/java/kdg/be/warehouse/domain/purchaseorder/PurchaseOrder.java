@@ -3,6 +3,7 @@ package kdg.be.warehouse.domain.purchaseorder;
 import jakarta.persistence.*;
 import kdg.be.warehouse.domain.Customer;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.UUID;
@@ -10,9 +11,10 @@ import java.util.UUID;
 @Entity
 @Table(name = "purchase_orders")
 @Getter
+@Setter
 public class PurchaseOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "po_number", nullable = false)
@@ -21,11 +23,11 @@ public class PurchaseOrder {
     @Column(name = "reference_uuid", nullable = false)
     private UUID referenceUUID;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "buyer_id", nullable = false)
     private Customer buyer;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "seller_id", nullable = false)
     private Customer seller;
 

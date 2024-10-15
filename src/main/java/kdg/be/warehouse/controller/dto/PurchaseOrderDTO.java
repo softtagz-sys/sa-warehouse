@@ -1,21 +1,29 @@
 package kdg.be.warehouse.controller.dto;
 
+import kdg.be.warehouse.domain.Customer;
+import kdg.be.warehouse.domain.purchaseorder.OrderLine;
+import lombok.Getter;
+
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 public class PurchaseOrderDTO {
     private String poNumber;
-    private UUID referenceUUID;
-    private CustomerDTO buyer;
-    private CustomerDTO seller;
+    private String referenceUUID;
+    private CustomerDTO customerParty;
+    private CustomerDTO sellerParty;
     private String vesselNumber;
     private List<OrderLineDTO> orderLines;
 
-    public PurchaseOrderDTO(String poNumber, UUID referenceUUID, CustomerDTO buyer, CustomerDTO seller, String vesselNumber, List<OrderLineDTO> orderLines) {
+    public PurchaseOrderDTO() {
+    }
+
+    public PurchaseOrderDTO(String poNumber, String referenceUUID, CustomerDTO customerParty, CustomerDTO sellerParty, String vesselNumber, List<OrderLineDTO> orderLines) {
         this.poNumber = poNumber;
         this.referenceUUID = referenceUUID;
-        this.buyer = buyer;
-        this.seller = seller;
+        this.customerParty = customerParty;
+        this.sellerParty = sellerParty;
         this.vesselNumber = vesselNumber;
         this.orderLines = orderLines;
     }

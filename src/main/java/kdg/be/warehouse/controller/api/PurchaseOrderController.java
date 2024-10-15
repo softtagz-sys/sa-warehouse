@@ -1,11 +1,18 @@
 package kdg.be.warehouse.controller.api;
 
+import kdg.be.warehouse.controller.dto.CustomerDTO;
+import kdg.be.warehouse.controller.dto.OrderLineDTO;
 import kdg.be.warehouse.controller.dto.PurchaseOrderDTO;
-import kdg.be.warehouse.controller.dto.mapper.PurchaseOrderMapper;
-import kdg.be.warehouse.service.PurchaseOrderService;
+import kdg.be.warehouse.domain.Customer;
+import kdg.be.warehouse.domain.purchaseorder.OrderLine;
 import kdg.be.warehouse.domain.purchaseorder.PurchaseOrder;
+import kdg.be.warehouse.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/purchase-orders")
@@ -14,12 +21,46 @@ public class PurchaseOrderController {
     @Autowired
     private PurchaseOrderService purchaseOrderService;
 
-    private final PurchaseOrderMapper purchaseOrderMapper = PurchaseOrderMapper.INSTANCE;
-
     @PostMapping("/receive")
     public void receivePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
-        PurchaseOrder purchaseOrder = purchaseOrderMapper.toEntity(purchaseOrderDTO);
+        PurchaseOrder purchaseOrder = convertToEntity(purchaseOrderDTO);
         purchaseOrderService.savePurchaseOrder(purchaseOrder);
-        System.out.println("Received Purchase Order: " + purchaseOrder);
+    }
+
+    private PurchaseOrder convertToEntity(PurchaseOrderDTO purchaseOrderDTO) {
+        Customer buyer = new Customer(
+                UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()),
+                purchaseOrderDTO.getCustomerParty().getName(),
+                purchaseOrderDTO.getCustomerParty().getAddress()
+        );
+
+        Customer seller = new Customer(
+                UUID.fromString(purchaseOrderDTO.getSellerParty().getUUID()),
+                purchaseOrderDTO.getSellerParty().getName(),
+                purchaseOrderDTO.getSellerParty().getAddress()
+        );
+
+        List<OrderLine> orderLines = purchaseOrderDTO.getOrderLines().stream()
+                .map(this::convertOrderLineDTOToEntity)
+                .collect(Collectors.toList());
+
+        return new PurchaseOrder(
+                purchaseOrderDTO.getPoNumber(),
+                UUID.fromString(purchaseOrderDTO.getReferenceUUID()),
+                buyer,
+                seller,
+                purchaseOrderDTO.getVesselNumber(),
+                orderLines
+        );
+    }
+
+    private OrderLine convertOrderLineDTOToEntity(OrderLineDTO orderLineDTO) {
+        OrderLine orderLine = new OrderLine();
+        orderLine.setLineNumber(orderLineDTO.getLineNumber());
+        orderLine.setMaterialType(orderLineDTO.getMaterialType());
+        orderLine.setDescription(orderLineDTO.getDescription());
+        orderLine.setQuantity(orderLineDTO.getQuantity());
+        orderLine.setUom(orderLineDTO.getUom());
+        return orderLine;
     }
 }

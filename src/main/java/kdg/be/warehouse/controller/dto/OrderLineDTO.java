@@ -1,5 +1,8 @@
 package kdg.be.warehouse.controller.dto;
 
+import lombok.Getter;
+
+@Getter
 public class OrderLineDTO {
     private int lineNumber;
     private String materialType;

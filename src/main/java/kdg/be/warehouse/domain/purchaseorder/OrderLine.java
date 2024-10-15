@@ -2,13 +2,15 @@ package kdg.be.warehouse.domain.purchaseorder;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "order_lines")
 @Getter
+@Setter
 public class OrderLine {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "line_number", nullable = false)

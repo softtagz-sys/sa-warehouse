@@ -3,29 +3,31 @@ package kdg.be.warehouse.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "customers")
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID customerId;
 
     @Column(unique = true)
-    @NotBlank(message = "A customer must have a name")
+    @NotBlank
     private String name;
 
-    @NotBlank(message = "A customer must have an address")
+    @NotBlank
     private String address;
 
     public Customer() {
     }
 
-    public Customer(String name, String address) {
+    public Customer(UUID customerId, String name, String address) {
+        this.customerId = customerId;
         this.name = name;
         this.address = address;
     }
