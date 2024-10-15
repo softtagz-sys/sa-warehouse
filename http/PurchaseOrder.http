@@ -1,0 +1,36 @@
+### Send Purchase Order
+POST http://localhost:8082/api/purchase-orders/receive
+Content-Type: application/json
+
+{
+  "purchaseOrder": {
+    "poNumber": "PO123456",
+    "referenceUUID": "550e8400-e29b-41d4-a716-446655440000",
+    "customerParty": {
+      "UUID": "56efaea4-953c-44bf-9f41-9700fffa2f28",
+      "name": "Joske Vermeulen",
+      "address": "Trammesantlei 122, Schoten, Belgium "
+    },
+    "sellerParty": {
+      "UUID": "b33df3fe-71be-4c00-94fc-20f4b83dfe12",
+      "name": "De klant van KDG",
+      "address": "Het adres van de klant van KDG"
+    },
+    "vesselNumber": "VSL7891011",
+    "orderLines": [
+      { "lineNumber" : 1,
+        "materialType": "PT",
+        "description": "Petcoke",
+        "quantity": 100,
+        "uom": "kt"
+      },
+      {
+        "lineNumber" : 2,
+        "materialType": "SK",
+        "description": "Slak",
+        "quantity": 50,
+        "uom": "kt"
+      }
+    ]
+  }
+}
