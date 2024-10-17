@@ -6,6 +6,7 @@ import kdg.be.warehouse.domain.Customer;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +22,9 @@ public class Warehouse {
 
     @Setter
     private float capacity;
+
+    @Setter
+    private float amountInStorage;
 
     @OneToOne
     private Customer owner;

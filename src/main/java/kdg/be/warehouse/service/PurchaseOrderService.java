@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class PurchaseOrderService {
 
@@ -17,6 +19,17 @@ public class PurchaseOrderService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    public void completePurchaseOrder(Long sellerId, String poNumber) {
+        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderRepository.findByPoNumberAndSellerId(poNumber, sellerId);
+        if (optionalPurchaseOrder.isPresent()) {
+            PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
+            // Logic to retrieve materials from warehouses
+            purchaseOrderRepository.save(purchaseOrder);
+        } else {
+            throw new RuntimeException("Purchase Order not found");
+        }
+    }
 
     @Transactional
     public PurchaseOrder savePurchaseOrder(PurchaseOrder purchaseOrder) {

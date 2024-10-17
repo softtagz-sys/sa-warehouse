@@ -27,6 +27,11 @@ public class PurchaseOrderController {
         purchaseOrderService.savePurchaseOrder(purchaseOrder);
     }
 
+    @PostMapping("/complete")
+    public void completePurchaseOrder(@RequestParam Long sellerId, @RequestParam String poNumber) {
+        purchaseOrderService.completePurchaseOrder(sellerId, poNumber);
+    }
+
     private PurchaseOrder convertToEntity(PurchaseOrderDTO purchaseOrderDTO) {
         Customer buyer = new Customer(
                 UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()),

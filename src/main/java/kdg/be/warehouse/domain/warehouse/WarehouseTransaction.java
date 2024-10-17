@@ -21,7 +21,8 @@ public class WarehouseTransaction {
     @ManyToOne
     private Material material;
 
-    private float amount;
+    private float remainingAmount;
+    private float initialAmount;
 
     @ManyToOne
     private Warehouse warehouse;
@@ -34,9 +35,10 @@ public class WarehouseTransaction {
     public WarehouseTransaction() {
     }
 
-    public WarehouseTransaction(Material material, float amount, Warehouse warehouse, Customer customer) {
+    public WarehouseTransaction(Material material, float initialAmount, Warehouse warehouse, Customer customer) {
         this.material = material;
-        this.amount = amount;
+        this.initialAmount = initialAmount;
+        this.remainingAmount = initialAmount;
         this.warehouse = warehouse;
         this.transactionTime = LocalDateTime.now();
         this.customer = customer;
