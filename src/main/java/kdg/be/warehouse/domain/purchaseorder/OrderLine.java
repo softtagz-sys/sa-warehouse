@@ -16,8 +16,8 @@ public class OrderLine {
     @Column(name = "line_number", nullable = false)
     private int lineNumber;
 
-    @Column(name = "material_type", nullable = false)
-    private String materialType;
+    @Column(name = "material_name", nullable = false)
+    private String materialName;
 
     @Column(name = "description")
     private String description;
@@ -35,9 +35,9 @@ public class OrderLine {
     public OrderLine() {
     }
 
-    public OrderLine(int lineNumber, String materialType, String description, int quantity, String uom) {
+    public OrderLine(int lineNumber, String materialName, String description, int quantity, String uom) {
         this.lineNumber = lineNumber;
-        this.materialType = materialType;
+        this.materialName = materialName;
         this.description = description;
         this.quantity = quantity;
         this.uom = uom;

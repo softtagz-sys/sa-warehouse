@@ -42,4 +42,11 @@ public class WarehouseService {
         }
         warehouse.setAmountInStorage(warehouse.getAmountInStorage() - amount);
     }
+
+    public boolean hasWarehouseOfMaterial(Customer customer, Material material) {
+    }
+
+    public Warehouse getWarehouseOfMaterialFromCustomer(Customer customer, Material material) {
+
+    }
 }
