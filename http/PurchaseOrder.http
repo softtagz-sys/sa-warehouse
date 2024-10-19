@@ -19,15 +19,13 @@ Content-Type: application/json
   "orderLines": [
     {
       "lineNumber": 1,
-      "materialType": "PT",
-      "description": "Petcoke",
+      "materialName": "PetCoke",
       "quantity": 100,
       "uom": "kt"
     },
     {
       "lineNumber": 2,
-      "materialType": "SK",
-      "description": "Slak",
+      "materialName": "Slak",
       "quantity": 50,
       "uom": "kt"
     }
