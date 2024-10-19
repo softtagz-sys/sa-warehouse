@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,13 @@ public class PurchaseOrderController {
     public void receivePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         PurchaseOrder purchaseOrder = convertToEntity(purchaseOrderDTO);
         purchaseOrderService.savePurchaseOrder(purchaseOrder);
+    }
+
+    //TODO: change to messaging
+    @PostMapping("/complete")
+    public Map<String, Object> completePurchaseOrders(@RequestParam Long sellerId, @RequestBody List<String> poNumbers) {
+        List<String> errors = purchaseOrderService.completePurchaseOrders(sellerId, poNumbers);
+        return Map.of("errors", errors);
     }
 
     private PurchaseOrder convertToEntity(PurchaseOrderDTO purchaseOrderDTO) {
@@ -57,8 +65,7 @@ public class PurchaseOrderController {
     private OrderLine convertOrderLineDTOToEntity(OrderLineDTO orderLineDTO) {
         OrderLine orderLine = new OrderLine();
         orderLine.setLineNumber(orderLineDTO.getLineNumber());
-        orderLine.setMaterialType(orderLineDTO.getMaterialType());
-        orderLine.setDescription(orderLineDTO.getDescription());
+        orderLine.setMaterialName(orderLineDTO.getMaterialName());
         orderLine.setQuantity(orderLineDTO.getQuantity());
         orderLine.setUom(orderLineDTO.getUom());
         return orderLine;
