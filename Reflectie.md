@@ -36,3 +36,34 @@ Momenteel staan er nog geen concrete issues voor refinment op het programma. We 
 
 ### Post-Coaching
 
+## V2
+
+### Pre-Coaching
+
+#### Geschatte Progress: 75%
+
+#### Status
+- Alle technologiëen verwerkt in huidige code
+- Land: 95%
+  - Paar zaken nog finetunen (validatie op messaging via rabbit, error pagina toevoegen)
+  - Document herlezen om te zien of alle vereisten verwerkt zijn
+  - Eventueel strategiëen toepassen
+  - Extra logging voorzien voor diagnostische fouten
+  - Controller advice
+
+- Warehouse: 35%%
+  
+- Water: 
+
+#### Stories
+Geïmplementeerd:
+  - Land: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 23
+  - Warehouse: 11, 12, 14, 15
+  - Water
+
+#### Quality
+Eerst na feedbacksessie de comments verwerken, vervolgens willen we tegen het einde van week 6 klaar zijn met alle requirements.
+Hierna zullen we eventueel een refactor toevoegen om bv. de slot-strategy toe te passen.
+
+#### Vragen
+Create schema via hibernate? 
