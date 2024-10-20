@@ -6,6 +6,7 @@ import kdg.be.warehouse.service.WarehouseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -21,8 +22,10 @@ public class WarehousesController {
     @GetMapping("/{customerId}/{rawMaterial}")
     public ResponseEntity<WarehouseStatusDto> getWarehouseStatus(@PathVariable String customerId, @PathVariable String rawMaterial) {
 
-        boolean warehouseAvailableForDelivery = warehouseService.GetAvailabilityStatus(UUID.fromString(customerId), rawMaterial);
+        Optional<Boolean> warehouseAvailableForDelivery = warehouseService.GetAvailabilityStatus(UUID.fromString(customerId), rawMaterial);
+        return warehouseAvailableForDelivery
+                .map(available -> ResponseEntity.ok(new WarehouseStatusDto(available)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
 
-        return ResponseEntity.ok(new WarehouseStatusDto(warehouseAvailableForDelivery));
     }
 }

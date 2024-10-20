@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface WarehouseRepository extends JpaRepository<Warehouse, UUID> {
 
-    Optional<Warehouse> findByOwner_customerIdAndMaterial_name(UUID customerId, String materialName);
+    Optional<Warehouse> findByOwner_customerIdAndMaterial_nameIgnoreCase(UUID customerId, String materialName);
 
     Optional<Warehouse> findByOwnerAndMaterial(Customer customer, Material material);
 }

@@ -20,8 +20,12 @@ public class WarehouseService {
         this.warehouseConfig = warehouseConfig;
     }
 
-    public boolean GetAvailabilityStatus(UUID customerId, String materialName) {
-        Optional<Warehouse> warehouseOptional = warehouseRepository.findByOwner_customerIdAndMaterial_name(customerId, materialName);
-        return warehouseOptional.filter(warehouse -> (warehouse.getCurrentCapacity() / warehouse.getMaxCapacity()) <= warehouseConfig.getMaxCapacityRatioForNewDeliveries()).isPresent();
+    public Optional<Boolean> GetAvailabilityStatus(UUID customerId, String materialName) {
+        Optional<Warehouse> warehouseOptional = warehouseRepository.findByOwner_customerIdAndMaterial_nameIgnoreCase(customerId, materialName);
+        if (warehouseOptional.isPresent()) {
+            Warehouse warehouse = warehouseOptional.get();
+            return Optional.of(warehouse.getCurrentCapacity() / warehouse.getMaxCapacity() < warehouseConfig.getMaxCapacityRatioForNewDeliveries());
+        }
+        return Optional.empty();
     }
 }
