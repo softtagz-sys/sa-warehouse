@@ -7,11 +7,9 @@ import lombok.Setter;
 @Setter
 public class WarehouseStatusDto {
 
-    private String warehouseId;
     private boolean isAvailable;
 
-    public WarehouseStatusDto(String warehouseId, boolean isAvailable) {
-        this.warehouseId = warehouseId;
+    public WarehouseStatusDto(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
 }
