@@ -1,5 +1,7 @@
 package kdg.be.warehouse.repository;
 
+import kdg.be.warehouse.domain.Customer;
+import kdg.be.warehouse.domain.material.Material;
 import kdg.be.warehouse.domain.warehouse.Warehouse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,4 +13,6 @@ import java.util.UUID;
 public interface WarehouseRepository extends JpaRepository<Warehouse, UUID> {
 
     Optional<Warehouse> findByOwner_customerIdAndMaterial_name(UUID customerId, String materialName);
+
+    Optional<Warehouse> findByOwnerAndMaterial(Customer customer, Material material);
 }

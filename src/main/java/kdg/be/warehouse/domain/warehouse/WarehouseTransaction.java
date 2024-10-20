@@ -41,4 +41,12 @@ public class WarehouseTransaction {
         this.transactionTime = LocalDateTime.now();
         this.customer = customer;
     }
+
+    public WarehouseTransaction(Material material, float amount, Warehouse warehouse, LocalDateTime transactionTime, Customer customer) {
+        this.material = material;
+        this.amount = amount;
+        this.warehouse = warehouse;
+        this.transactionTime = transactionTime;
+        this.customer = customer;
+    }
 }
