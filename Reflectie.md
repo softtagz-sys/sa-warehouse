@@ -51,15 +51,21 @@ Momenteel staan er nog geen concrete issues voor refinment op het programma. We 
   - Extra logging voorzien voor diagnostische fouten
   - Controller advice
 
-- Warehouse: 35%%
+- Warehouse: 35%
+  - Heel facturatie nog implementeren
+  - Enkele Kleine calls
+  - Testing (60% code coverage)
   
-- Water: 
+- Water: 90%
+  - Laatste features implementeren
+  - Security overal toepassen
+  - Demos afmaken
 
 #### Stories
 Geïmplementeerd:
   - Land: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 23
   - Warehouse: 11, 12, 14, 15
-  - Water
+  - Water: 19, 20, 21
 
 #### Quality
 Eerst na feedbacksessie de comments verwerken, vervolgens willen we tegen het einde van week 6 klaar zijn met alle requirements.
