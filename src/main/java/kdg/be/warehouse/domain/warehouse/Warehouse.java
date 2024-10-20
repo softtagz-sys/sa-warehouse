@@ -24,10 +24,10 @@ public class Warehouse {
     @Setter
     private float currentCapacity;
 
-    @Setter
-    private float amountInStorage;
+    @ManyToOne
+    private Material material;
 
-    @OneToOne
+    @ManyToOne
     private Customer owner;
 
     public Warehouse() {
