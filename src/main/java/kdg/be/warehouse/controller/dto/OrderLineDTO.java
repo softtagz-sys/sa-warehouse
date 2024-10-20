@@ -5,15 +5,13 @@ import lombok.Getter;
 @Getter
 public class OrderLineDTO {
     private int lineNumber;
-    private String materialType;
-    private String description;
+    private String materialName;
     private int quantity;
     private String uom;
 
-    public OrderLineDTO(int lineNumber, String materialType, String description, int quantity, String uom) {
+    public OrderLineDTO(int lineNumber, String materialName, int quantity, String uom) {
         this.lineNumber = lineNumber;
-        this.materialType = materialType;
-        this.description = description;
+        this.materialName = materialName;
         this.quantity = quantity;
         this.uom = uom;
     }

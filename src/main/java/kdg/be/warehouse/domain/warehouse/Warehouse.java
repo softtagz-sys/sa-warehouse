@@ -7,6 +7,7 @@ import kdg.be.warehouse.domain.material.Material;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,10 +24,10 @@ public class Warehouse {
     @Setter
     private float currentCapacity;
 
-    @ManyToOne
-    private Material material;
+    @Setter
+    private float amountInStorage;
 
-    @ManyToOne
+    @OneToOne
     private Customer owner;
 
     public Warehouse() {
