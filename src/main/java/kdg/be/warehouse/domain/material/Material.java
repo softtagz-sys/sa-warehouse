@@ -1,6 +1,7 @@
 package kdg.be.warehouse.domain.material;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,8 @@ public class Material {
     @OneToOne
     private PricingInfo salesPrice;
 
+    @NotBlank
+    @Column(columnDefinition = "TEXT") // Necessary for varchar > 255
     private String description;
 
     public Material() {
