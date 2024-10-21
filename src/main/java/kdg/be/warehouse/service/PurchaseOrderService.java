@@ -19,16 +19,18 @@ import java.util.UUID;
 @Service
 public class PurchaseOrderService {
 
-    @Autowired
-    private PurchaseOrderRepository purchaseOrderRepository;
-    @Autowired
-    private CustomerRepository customerRepository;
-    @Autowired
-    private WarehouseService warehouseService;
-    @Autowired
-    private MaterialRepository materialRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
+    private final CustomerRepository customerRepository;
+    private final WarehouseService warehouseService;
+    private final MaterialRepository materialRepository;
 
-    //TODO: check if user has warehouse of material
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, CustomerRepository customerRepository, WarehouseService warehouseService, MaterialRepository materialRepository) {
+        this.purchaseOrderRepository = purchaseOrderRepository;
+        this.customerRepository = customerRepository;
+        this.warehouseService = warehouseService;
+        this.materialRepository = materialRepository;
+    }
+
     public List<String> completePurchaseOrders(UUID sellerId, List<String> poNumbers) {
         List<String> errors = List.of();
         for (String poNumber : poNumbers) {
@@ -41,29 +43,38 @@ public class PurchaseOrderService {
         return errors;
     }
 
-    //TODO: Refactor this to lower complexity
     public void completePurchaseOrder(UUID sellerId, String poNumber) {
-        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderRepository.findByPoNumberAndSeller_customerId(poNumber, sellerId);
-        if (optionalPurchaseOrder.isPresent()) {
-            PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
-            List<OrderLine> orderlines = purchaseOrder.getOrderLines();
-            for (OrderLine orderLine : orderlines) {
-                Optional<Material> optionalMaterial = materialRepository.findByName(orderLine.getMaterialName());
-                if (optionalMaterial.isPresent()) {
-                    Material material = optionalMaterial.get();
-                    Optional<Customer> optionalSeller = customerRepository.findById(sellerId);
-                    if (optionalSeller.isPresent() && warehouseService.hasWarehouseOfMaterial(optionalSeller.get(), material)) {
-                        Warehouse warehouse = warehouseService.getWarehouseOfMaterialFromCustomer(optionalSeller.get(), material);
-                        warehouseService.retrieveMaterial(warehouse, material, orderLine.getQuantity());
-                    } else {
-                        throw new RuntimeException("Seller does not exist or does not have a warehouse");
-                    }
-                } else {
-                    throw new RuntimeException("Material not found: " + orderLine.getMaterialName());
-                }
-            }
+        PurchaseOrder purchaseOrder = findPurchaseOrder(sellerId, poNumber);
+        List<OrderLine> orderLines = purchaseOrder.getOrderLines();
+
+        for (OrderLine orderLine : orderLines) {
+            Material material = findMaterial(orderLine.getMaterialName());
+            Customer seller = findSeller(sellerId);
+            processOrderLine(seller, material, orderLine);
+        }
+    }
+
+    private PurchaseOrder findPurchaseOrder(UUID sellerId, String poNumber) {
+        return purchaseOrderRepository.findByPoNumberAndSeller_customerId(poNumber, sellerId)
+                .orElseThrow(() -> new RuntimeException("Purchase Order not found"));
+    }
+
+    private Material findMaterial(String materialName) {
+        return materialRepository.findByName(materialName)
+                .orElseThrow(() -> new RuntimeException("Material not found: " + materialName));
+    }
+
+    private Customer findSeller(UUID sellerId) {
+        return customerRepository.findById(sellerId)
+                .orElseThrow(() -> new RuntimeException("Seller does not exist"));
+    }
+
+    private void processOrderLine(Customer seller, Material material, OrderLine orderLine) {
+        if (warehouseService.hasWarehouseOfMaterial(seller, material)) {
+            Warehouse warehouse = warehouseService.getWarehouseOfMaterialFromCustomer(seller, material);
+            warehouseService.retrieveMaterial(warehouse, material, orderLine.getQuantity());
         } else {
-            throw new RuntimeException("Purchase Order not found");
+            throw new RuntimeException("Seller does not have a warehouse for the material");
         }
     }
 

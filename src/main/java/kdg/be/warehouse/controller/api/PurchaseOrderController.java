@@ -19,8 +19,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/purchase-orders")
 public class PurchaseOrderController {
 
-    @Autowired
-    private PurchaseOrderService purchaseOrderService;
+    private final PurchaseOrderService purchaseOrderService;
+
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService) {
+        this.purchaseOrderService = purchaseOrderService;
+    }
 
     @PostMapping("/receive")
     public void receivePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
@@ -28,7 +31,6 @@ public class PurchaseOrderController {
         purchaseOrderService.savePurchaseOrder(purchaseOrder);
     }
 
-    //TODO: change to messaging
     @PostMapping("/complete")
     public Map<String, Object> completePurchaseOrders(@RequestParam String sellerId, @RequestBody List<String> poNumbers) {
         List<String> errors = purchaseOrderService.completePurchaseOrders(UUID.fromString(sellerId), poNumbers);
