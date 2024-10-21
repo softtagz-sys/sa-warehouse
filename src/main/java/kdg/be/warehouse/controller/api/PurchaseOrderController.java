@@ -30,8 +30,8 @@ public class PurchaseOrderController {
 
     //TODO: change to messaging
     @PostMapping("/complete")
-    public Map<String, Object> completePurchaseOrders(@RequestParam Long sellerId, @RequestBody List<String> poNumbers) {
-        List<String> errors = purchaseOrderService.completePurchaseOrders(sellerId, poNumbers);
+    public Map<String, Object> completePurchaseOrders(@RequestParam String sellerId, @RequestBody List<String> poNumbers) {
+        List<String> errors = purchaseOrderService.completePurchaseOrders(UUID.fromString(sellerId), poNumbers);
         return Map.of("errors", errors);
     }
 

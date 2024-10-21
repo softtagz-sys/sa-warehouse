@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PurchaseOrderService {
@@ -28,7 +29,7 @@ public class PurchaseOrderService {
     private MaterialRepository materialRepository;
 
     //TODO: check if user has warehouse of material
-    public List<String> completePurchaseOrders(Long sellerId, List<String> poNumbers) {
+    public List<String> completePurchaseOrders(UUID sellerId, List<String> poNumbers) {
         List<String> errors = List.of();
         for (String poNumber : poNumbers) {
             try {
@@ -41,8 +42,8 @@ public class PurchaseOrderService {
     }
 
     //TODO: Refactor this to lower complexity
-    public void completePurchaseOrder(Long sellerId, String poNumber) {
-        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderRepository.findByPoNumberAndSellerId(poNumber, sellerId);
+    public void completePurchaseOrder(UUID sellerId, String poNumber) {
+        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderRepository.findByPoNumberAndSeller_customerId(poNumber, sellerId);
         if (optionalPurchaseOrder.isPresent()) {
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
             List<OrderLine> orderlines = purchaseOrder.getOrderLines();

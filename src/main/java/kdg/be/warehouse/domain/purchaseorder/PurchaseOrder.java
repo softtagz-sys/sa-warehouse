@@ -14,8 +14,8 @@ import java.util.UUID;
 @Setter
 public class PurchaseOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     @Column(name = "po_number", nullable = false)
     private String poNumber;
