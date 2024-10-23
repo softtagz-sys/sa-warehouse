@@ -22,7 +22,8 @@ public class WarehousesController {
     @GetMapping("/{customerId}/{rawMaterial}")
     public ResponseEntity<WarehouseStatusDto> getWarehouseStatus(@PathVariable String customerId, @PathVariable String rawMaterial) {
 
-        Optional<Boolean> warehouseAvailableForDelivery = warehouseService.GetAvailabilityStatus(UUID.fromString(customerId), rawMaterial);
+        // TODO GET --> get
+        Optional<Boolean> warehouseAvailableForDelivery = warehouseService.getAvailabilityStatus(UUID.fromString(customerId), rawMaterial);
         return warehouseAvailableForDelivery
                 .map(available -> ResponseEntity.ok(new WarehouseStatusDto(available)))
                 .orElseGet(() -> ResponseEntity.notFound().build());

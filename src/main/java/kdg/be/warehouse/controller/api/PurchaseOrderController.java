@@ -31,6 +31,7 @@ public class PurchaseOrderController {
         purchaseOrderService.savePurchaseOrder(purchaseOrder);
     }
 
+    //TODO: evt put aanpssen en naar completed
     @PostMapping("/complete")
     public Map<String, Object> completePurchaseOrders(@RequestParam String sellerId, @RequestBody List<String> poNumbers) {
         List<String> errors = purchaseOrderService.completePurchaseOrders(UUID.fromString(sellerId), poNumbers);

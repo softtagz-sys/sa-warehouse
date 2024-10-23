@@ -1,3 +1,4 @@
+
 INSERT INTO warehouse.customers (customer_id, name, address)
 VALUES
     ('9ae35800-5fdf-4932-a713-251f49e11012', 'Desmet NV', 'Patrickdreef 445, 5488, Vaux-Chavanne, Belgium'),

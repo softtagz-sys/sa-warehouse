@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -19,6 +20,8 @@ public class WarehousesControllerTest {
     @Autowired MockMvc mockMvc;
 
     @Test
+    @Sql(value = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/sql/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void fetchingStatusOfAnExistingWarehouseShouldReturnTrue() throws Exception {
         mockMvc.perform(
                     get("/api/warehouses/9ae35800-5fdf-4932-a713-251f49e11012/Gips")
@@ -29,6 +32,8 @@ public class WarehousesControllerTest {
     }
 
     @Test
+    @Sql(value = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/sql/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void fetchingStatusOfAnExistingWarehouseShouldReturnFalse() throws Exception {
         mockMvc.perform(
                         get("/api/warehouses/9ae35800-5fdf-4932-a713-251f49e11012/Ijzererts")
@@ -40,6 +45,8 @@ public class WarehousesControllerTest {
     }
 
     @Test
+    @Sql(value = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/sql/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void fetchingStatusOfAnExistingWarehouseWithWrongCaseMaterialShouldReturnTrue() throws Exception {
         mockMvc.perform(
                         get("/api/warehouses/9ae35800-5fdf-4932-a713-251f49e11012/gips")
@@ -51,6 +58,8 @@ public class WarehousesControllerTest {
     }
 
     @Test
+    @Sql(value = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/sql/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void fetchingStatusOfAnExistingWarehouseWithWrongMaterialShouldReturnNotFound() throws Exception {
         mockMvc.perform(
                         get("/api/warehouses/9ae35800-5fdf-4932-a713-251f49e11012/cocacola")
@@ -58,7 +67,4 @@ public class WarehousesControllerTest {
                 .andExpect(status().isNotFound());
 
     }
-
-
-
 }

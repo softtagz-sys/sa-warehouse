@@ -37,7 +37,7 @@ public class WarehouseTransactionService {
     @Transactional
     public void addDelivery(UUID customerId, String materialName, float weight, LocalDateTime timestamp) {
         Optional<Customer> customerOptional =  customerRepository.findById(customerId);
-        Optional<Material> materialOptional = materialRepository.findByName(materialName);
+        Optional<Material> materialOptional = materialRepository.findByNameIgnoreCase(materialName);
 
         if (customerOptional.isEmpty() || materialOptional.isEmpty()) {
             LOGGER.warn("ADD DELIVERY - No customer with id {} r material with name {} found", customerId, materialName);

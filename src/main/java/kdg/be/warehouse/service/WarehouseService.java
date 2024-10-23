@@ -54,7 +54,7 @@ public class WarehouseService {
         return warehouseRepository.findByOwnerAndMaterial(customer, material).get();
     }
 
-    public Optional<Boolean> GetAvailabilityStatus(UUID customerId, String materialName) {
+    public Optional<Boolean> getAvailabilityStatus(UUID customerId, String materialName) {
         Optional<Warehouse> warehouseOptional = warehouseRepository.findByOwner_customerIdAndMaterial_nameIgnoreCase(customerId, materialName);
         if (warehouseOptional.isPresent()) {
             Warehouse warehouse = warehouseOptional.get();

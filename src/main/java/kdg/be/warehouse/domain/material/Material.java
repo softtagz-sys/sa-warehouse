@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,11 +19,8 @@ public class Material {
 
     private String name;
 
-    @OneToOne
-    private PricingInfo storageCost;
-
-    @OneToOne
-    private PricingInfo salesPrice;
+    @OneToMany(mappedBy = "material")
+    private List<PricingInfo> prices;
 
     @NotBlank
     @Column(columnDefinition = "TEXT") // Necessary for varchar > 255
@@ -31,10 +29,8 @@ public class Material {
     public Material() {
     }
 
-    public Material(String name, PricingInfo storageCost, PricingInfo salesPrice, String description) {
+    public Material(String name, String description) {
         this.name = name;
-        this.storageCost = storageCost;
-        this.salesPrice = salesPrice;
         this.description = description;
     }
 }

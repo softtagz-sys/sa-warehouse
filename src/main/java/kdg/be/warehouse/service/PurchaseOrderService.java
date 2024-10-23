@@ -31,6 +31,7 @@ public class PurchaseOrderService {
         this.materialRepository = materialRepository;
     }
 
+    //TODO: check if user has warehouse of material
     public List<String> completePurchaseOrders(UUID sellerId, List<String> poNumbers) {
         List<String> errors = List.of();
         for (String poNumber : poNumbers) {
@@ -60,7 +61,7 @@ public class PurchaseOrderService {
     }
 
     private Material findMaterial(String materialName) {
-        return materialRepository.findByName(materialName)
+        return materialRepository.findByNameIgnoreCase(materialName)
                 .orElseThrow(() -> new RuntimeException("Material not found: " + materialName));
     }
 
