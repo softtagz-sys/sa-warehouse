@@ -1,37 +1,47 @@
 package kdg.be.warehouse.domain.material;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "pricing_infos")
 @Getter
-@Setter
 public class PricingInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID pricingInfoId;
 
+    @Setter
     private float price;
 
-    private Date startDate;
+    @Setter
+    @NotNull
+    private LocalDateTime validFrom;
 
-    private Date endDate;
+    @Setter
+    private LocalDateTime validTo;
+
+    @Enumerated(EnumType.STRING)
+    private PriceType priceType;
+
+    @ManyToOne
+    private Material material;
 
     public PricingInfo() {
     }
 
-    public PricingInfo(float price, Date startDate) {
-        this(price, startDate, null);
-    }
-
-    public PricingInfo(float price, Date startDate, Date endDate) {
+    public PricingInfo(float price, LocalDateTime validFrom, PriceType priceType, Material material) {
         this.price = price;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.validFrom = validFrom;
+        this.validTo = null;
+        this.priceType = priceType;
+        this.material = material;
     }
 }
