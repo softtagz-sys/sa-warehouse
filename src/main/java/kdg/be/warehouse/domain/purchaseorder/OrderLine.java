@@ -22,6 +22,7 @@ public class OrderLine {
     @Column(name = "description")
     private String description;
 
+    // TODO change this to double
     @Column(name = "quantity", nullable = false)
     private int quantity;
 

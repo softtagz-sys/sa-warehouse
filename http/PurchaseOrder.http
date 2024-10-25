@@ -11,8 +11,8 @@ Content-Type: application/json
     "address": "Trammesantlei 122, Schoten, Belgium "
   },
   "sellerParty": {
-    "UUID": "b33df3fe-71be-4c00-94fc-20f4b83dfe12",
-    "name": "De klant van KDG",
+    "UUID": "9ae35800-5fdf-4932-a713-251f49e11012",
+    "name": "Desmet NV",
     "address": "Het adres van de klant van KDG"
   },
   "vesselNumber": "VSL7891011",
@@ -31,3 +31,12 @@ Content-Type: application/json
     }
   ]
 }
+
+### Complete Purchase Order
+POST http://localhost:8082/api/purchase-orders/complete?sellerId=b33df3fe-71be-4c00-94fc-20f4b83dfe12
+Content-Type: application/json
+
+
+[
+  "PO123456"
+]

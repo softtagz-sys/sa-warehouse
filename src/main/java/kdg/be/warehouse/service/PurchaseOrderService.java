@@ -8,12 +8,10 @@ import kdg.be.warehouse.domain.warehouse.Warehouse;
 import kdg.be.warehouse.repository.CustomerRepository;
 import kdg.be.warehouse.repository.MaterialRepository;
 import kdg.be.warehouse.repository.PurchaseOrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,12 +21,14 @@ public class PurchaseOrderService {
     private final CustomerRepository customerRepository;
     private final WarehouseService warehouseService;
     private final MaterialRepository materialRepository;
+    private final CommissionService commissionService;
 
-    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, CustomerRepository customerRepository, WarehouseService warehouseService, MaterialRepository materialRepository) {
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, CustomerRepository customerRepository, WarehouseService warehouseService, MaterialRepository materialRepository, CommissionService commissionService) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.customerRepository = customerRepository;
         this.warehouseService = warehouseService;
         this.materialRepository = materialRepository;
+        this.commissionService = commissionService;
     }
 
     //TODO: check if user has warehouse of material
@@ -36,23 +36,32 @@ public class PurchaseOrderService {
         List<String> errors = List.of();
         for (String poNumber : poNumbers) {
             try {
-                completePurchaseOrder(sellerId, poNumber);
+                completeAndInvoicePurchaseOrder(sellerId, poNumber);
             } catch (RuntimeException e) {
                 errors.add(e.getMessage());
             }
         }
+
         return errors;
     }
 
-    public void completePurchaseOrder(UUID sellerId, String poNumber) {
+    @Transactional
+    public void completeAndInvoicePurchaseOrder(UUID sellerId, String poNumber) {
         PurchaseOrder purchaseOrder = findPurchaseOrder(sellerId, poNumber);
         List<OrderLine> orderLines = purchaseOrder.getOrderLines();
+        Customer seller = findSeller(sellerId);
 
         for (OrderLine orderLine : orderLines) {
             Material material = findMaterial(orderLine.getMaterialName());
-            Customer seller = findSeller(sellerId);
+
             processOrderLine(seller, material, orderLine);
         }
+
+        invoiceSeller(seller, purchaseOrder);
+    }
+
+    private void invoiceSeller(Customer seller, PurchaseOrder po) {
+        commissionService.addCommissionInvoice(seller, po);
     }
 
     private PurchaseOrder findPurchaseOrder(UUID sellerId, String poNumber) {
@@ -86,6 +95,7 @@ public class PurchaseOrderService {
             customerRepository.save(buyer);
         }
 
+        //Todo Geen nieuwe seller aanmaken --> hebben geen warehouse :)
         Customer seller = purchaseOrder.getSeller();
         if (seller != null && seller.getCustomerId() == null) {
             customerRepository.save(seller);
