@@ -53,7 +53,6 @@ public class PurchaseOrderService {
 
         for (OrderLine orderLine : orderLines) {
             Material material = findMaterial(orderLine.getMaterialName());
-
             processOrderLine(seller, material, orderLine);
         }
 
@@ -90,23 +89,25 @@ public class PurchaseOrderService {
 
     @Transactional
     public PurchaseOrder savePurchaseOrder(PurchaseOrder purchaseOrder) {
-        Customer buyer = purchaseOrder.getBuyer();
-        if (buyer != null && buyer.getCustomerId() == null) {
-            customerRepository.save(buyer);
-        }
+        Customer buyer = findOrCreateCustomer(purchaseOrder.getBuyer());
+        Customer seller = findOrCreateCustomer(purchaseOrder.getSeller());
 
-        //Todo Geen nieuwe seller aanmaken --> hebben geen warehouse :)
-        Customer seller = purchaseOrder.getSeller();
-        if (seller != null && seller.getCustomerId() == null) {
-            customerRepository.save(seller);
-        }
+        purchaseOrder.setBuyer(buyer);
+        purchaseOrder.setSeller(seller);
 
         for (OrderLine orderLine : purchaseOrder.getOrderLines()) {
             orderLine.setPurchaseOrder(purchaseOrder);
         }
 
-        PurchaseOrder po = purchaseOrderRepository.save(purchaseOrder);
-
-        return po;
+        return purchaseOrderRepository.save(purchaseOrder);
     }
+
+    private Customer findOrCreateCustomer(Customer customer) {
+        if (customer == null) {
+            return null;
+        }
+        return customerRepository.findById(customer.getCustomerId())
+                .orElseGet(() -> customerRepository.save(customer));
+    }
+
 }
