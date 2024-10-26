@@ -106,11 +106,17 @@ public class PurchaseOrderService {
                 .orElseGet(() -> customerRepository.save(customer));
     }
 
+    @Transactional(readOnly = true)
     public List<PurchaseOrder> getOpenPurchaseOrders() {
-        return purchaseOrderRepository.findAllByIsCompletedFalse();
+        List<PurchaseOrder> openPurchaseOrders = purchaseOrderRepository.findOpenPurchaseOrders();
+        openPurchaseOrders.forEach(purchaseOrder -> purchaseOrder.getOrderLines().size());
+        return openPurchaseOrders;
     }
 
+    @Transactional(readOnly = true)
     public List<PurchaseOrder> getCompletedPurchaseOrders(Date startDate, Date endDate) {
-        return purchaseOrderRepository.findAllByIsCompletedTrueAndCompletedDateBetween(startDate, endDate);
+        List<PurchaseOrder> completedPurchaseOrders = purchaseOrderRepository.findAllByIsCompletedTrueAndCompletedDateBetween(startDate, endDate);
+        completedPurchaseOrders.forEach(purchaseOrder -> purchaseOrder.getOrderLines().size());
+        return completedPurchaseOrders;
     }
 }

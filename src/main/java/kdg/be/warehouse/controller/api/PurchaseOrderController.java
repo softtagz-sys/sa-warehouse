@@ -41,7 +41,7 @@ public class PurchaseOrderController {
     }
 
     @GetMapping("/open")
-    ResponseEntity<List<PurchaseOrderDTO>> getOpenPurchaseOrders() {
+    public ResponseEntity<List<PurchaseOrderDTO>> getOpenPurchaseOrders() {
         List<PurchaseOrder> openPurchaseOrders = purchaseOrderService.getOpenPurchaseOrders();
         List<PurchaseOrderDTO> openPurchaseOrderDTOs = openPurchaseOrders.stream()
                 .map(this::convertToDTO)
@@ -58,6 +58,38 @@ public class PurchaseOrderController {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(completedPurchaseOrderDTOs);
+    }
+
+    private PurchaseOrderDTO convertToDTO(PurchaseOrder purchaseOrder) {
+        PurchaseOrderDTO dto = new PurchaseOrderDTO(
+                purchaseOrder.getPoNumber(),
+                purchaseOrder.getReferenceUUID().toString(),
+                new CustomerDTO(
+                        purchaseOrder.getBuyer().getCustomerId().toString(),
+                        purchaseOrder.getBuyer().getName(),
+                        purchaseOrder.getBuyer().getAddress()
+                ),
+                new CustomerDTO(
+                        purchaseOrder.getSeller().getCustomerId().toString(),
+                        purchaseOrder.getSeller().getName(),
+                        purchaseOrder.getSeller().getAddress()
+                ),
+                purchaseOrder.getVesselNumber(),
+                purchaseOrder.getOrderLines().stream()
+                        .map(this::convertOrderLineEntityToDTO)
+                        .collect(Collectors.toList())
+        );
+        return dto;
+    }
+
+    private OrderLineDTO convertOrderLineEntityToDTO(OrderLine orderLine) {
+        OrderLineDTO dto = new OrderLineDTO(
+                orderLine.getLineNumber(),
+                orderLine.getMaterialName(),
+                orderLine.getQuantity(),
+                orderLine.getUom()
+        );
+        return dto;
     }
 
 
@@ -95,37 +127,5 @@ public class PurchaseOrderController {
         orderLine.setQuantity(orderLineDTO.getQuantity());
         orderLine.setUom(orderLineDTO.getUom());
         return orderLine;
-    }
-
-    private PurchaseOrderDTO convertToDTO(PurchaseOrder purchaseOrder) {
-        PurchaseOrderDTO dto = new PurchaseOrderDTO(
-                purchaseOrder.getPoNumber(),
-                purchaseOrder.getReferenceUUID().toString(),
-                new CustomerDTO(
-                        purchaseOrder.getBuyer().getCustomerId().toString(),
-                        purchaseOrder.getBuyer().getName(),
-                        purchaseOrder.getBuyer().getAddress()
-                ),
-                new CustomerDTO(
-                        purchaseOrder.getSeller().getCustomerId().toString(),
-                        purchaseOrder.getSeller().getName(),
-                        purchaseOrder.getSeller().getAddress()
-                ),
-                purchaseOrder.getVesselNumber(),
-                purchaseOrder.getOrderLines().stream()
-                        .map(this::convertOrderLineEntityToDTO)
-                        .collect(Collectors.toList())
-        );
-        return dto;
-    }
-
-    private OrderLineDTO convertOrderLineEntityToDTO(OrderLine orderLine) {
-        OrderLineDTO dto = new OrderLineDTO(
-                orderLine.getLineNumber(),
-                orderLine.getMaterialName(),
-                orderLine.getQuantity(),
-                orderLine.getUom()
-        );
-        return dto;
     }
 }
