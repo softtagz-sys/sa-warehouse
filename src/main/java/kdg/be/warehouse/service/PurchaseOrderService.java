@@ -105,6 +105,8 @@ public class PurchaseOrderService {
             orderLine.setPurchaseOrder(purchaseOrder);
         }
 
-        return purchaseOrderRepository.save(purchaseOrder);
+        PurchaseOrder po = purchaseOrderRepository.save(purchaseOrder);
+
+        return po;
     }
 }

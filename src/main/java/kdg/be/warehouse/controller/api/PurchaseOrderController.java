@@ -6,12 +6,14 @@ import kdg.be.warehouse.controller.dto.PurchaseOrderDTO;
 import kdg.be.warehouse.domain.Customer;
 import kdg.be.warehouse.domain.purchaseorder.OrderLine;
 import kdg.be.warehouse.domain.purchaseorder.PurchaseOrder;
+import kdg.be.warehouse.service.CustomerService;
 import kdg.be.warehouse.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,9 +22,11 @@ import java.util.stream.Collectors;
 public class PurchaseOrderController {
 
     private final PurchaseOrderService purchaseOrderService;
+    private final CustomerService customerService;
 
-    public PurchaseOrderController(PurchaseOrderService purchaseOrderService) {
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, CustomerService customerService) {
         this.purchaseOrderService = purchaseOrderService;
+        this.customerService = customerService;
     }
 
     @PostMapping("/receive")
@@ -38,18 +42,27 @@ public class PurchaseOrderController {
         return Map.of("errors", errors);
     }
 
+    // TODO: Ok om hier al entiteiten aan te maken?
     private PurchaseOrder convertToEntity(PurchaseOrderDTO purchaseOrderDTO) {
-        Customer buyer = new Customer(
-                UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()),
-                purchaseOrderDTO.getCustomerParty().getName(),
-                purchaseOrderDTO.getCustomerParty().getAddress()
-        );
 
-        Customer seller = new Customer(
-                UUID.fromString(purchaseOrderDTO.getSellerParty().getUUID()),
-                purchaseOrderDTO.getSellerParty().getName(),
-                purchaseOrderDTO.getSellerParty().getAddress()
-        );
+        Customer buyer = customerService.findCustomerById(UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()))
+                .orElseGet(
+                        () -> new Customer(
+                                        UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()),
+                                        purchaseOrderDTO.getCustomerParty().getName(),
+                                        purchaseOrderDTO.getCustomerParty().getAddress()
+                                )
+                );
+
+        Customer seller = customerService.findCustomerById(UUID.fromString(purchaseOrderDTO.getSellerParty().getUUID()))
+                .orElseGet(
+                        () -> new Customer(
+                                UUID.fromString(purchaseOrderDTO.getSellerParty().getUUID()),
+                                purchaseOrderDTO.getSellerParty().getName(),
+                                purchaseOrderDTO.getSellerParty().getAddress()
+                        )
+                );
+
 
         List<OrderLine> orderLines = purchaseOrderDTO.getOrderLines().stream()
                 .map(this::convertOrderLineDTOToEntity)
