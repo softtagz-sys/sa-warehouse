@@ -8,6 +8,7 @@ import kdg.be.warehouse.domain.purchaseorder.OrderLine;
 import kdg.be.warehouse.domain.purchaseorder.PurchaseOrder;
 import kdg.be.warehouse.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,8 +51,8 @@ public class PurchaseOrderController {
 
     @GetMapping("/completed")
     ResponseEntity<List<PurchaseOrderDTO>> getCompletedPurchaseOrders(
-            @RequestParam Date startDate,
-            @RequestParam Date endDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
         List<PurchaseOrder> completedPurchaseOrders = purchaseOrderService.getCompletedPurchaseOrders(startDate, endDate);
         List<PurchaseOrderDTO> completedPurchaseOrderDTOs = completedPurchaseOrders.stream()
                 .map(this::convertToDTO)

@@ -31,3 +31,9 @@ Content-Type: application/json
     }
   ]
 }
+
+### Get Open Purchase Orders
+GET http://localhost:8082/api/purchase-orders/open
+
+### Get completed Purchase Orders between dates
+GET http://localhost:8082/api/purchase-orders/completed?startDate=2023-10-01&endDate=2023-10-05
