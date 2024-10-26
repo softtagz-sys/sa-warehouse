@@ -37,6 +37,8 @@ public class PurchaseOrder {
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLine> orderLines;
 
+    private boolean isCompleted;
+
     public PurchaseOrder() {
     }
 
@@ -47,5 +49,6 @@ public class PurchaseOrder {
         this.seller = seller;
         this.vesselNumber = vesselNumber;
         this.orderLines = orderLines;
+        this.isCompleted = false;
     }
 }

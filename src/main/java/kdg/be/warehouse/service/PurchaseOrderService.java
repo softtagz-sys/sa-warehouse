@@ -53,6 +53,8 @@ public class PurchaseOrderService {
             Customer seller = findSeller(sellerId);
             processOrderLine(seller, material, orderLine);
         }
+
+        purchaseOrder.setCompleted(true);
     }
 
     private PurchaseOrder findPurchaseOrder(UUID sellerId, String poNumber) {
@@ -100,5 +102,9 @@ public class PurchaseOrderService {
         }
         return customerRepository.findById(customer.getCustomerId())
                 .orElseGet(() -> customerRepository.save(customer));
+    }
+
+    public List<PurchaseOrder> getOpenPurchaseOrders() {
+        return purchaseOrderRepository.findAllByIsCompletedFalse();
     }
 }

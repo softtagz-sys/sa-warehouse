@@ -8,6 +8,7 @@ import kdg.be.warehouse.domain.purchaseorder.OrderLine;
 import kdg.be.warehouse.domain.purchaseorder.PurchaseOrder;
 import kdg.be.warehouse.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +37,16 @@ public class PurchaseOrderController {
         List<String> errors = purchaseOrderService.completePurchaseOrders(UUID.fromString(sellerId), poNumbers);
         return Map.of("errors", errors);
     }
+
+    @GetMapping("/open")
+    ResponseEntity<List<PurchaseOrderDTO>> getOpenPurchaseOrders() {
+        List<PurchaseOrder> openPurchaseOrders = purchaseOrderService.getOpenPurchaseOrders();
+        List<PurchaseOrderDTO> openPurchaseOrderDTOs = openPurchaseOrders.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(openPurchaseOrderDTOs);
+    }
+
 
     private PurchaseOrder convertToEntity(PurchaseOrderDTO purchaseOrderDTO) {
         Customer buyer = new Customer(
@@ -71,5 +82,37 @@ public class PurchaseOrderController {
         orderLine.setQuantity(orderLineDTO.getQuantity());
         orderLine.setUom(orderLineDTO.getUom());
         return orderLine;
+    }
+
+    private PurchaseOrderDTO convertToDTO(PurchaseOrder purchaseOrder) {
+        PurchaseOrderDTO dto = new PurchaseOrderDTO(
+                purchaseOrder.getPoNumber(),
+                purchaseOrder.getReferenceUUID().toString(),
+                new CustomerDTO(
+                        purchaseOrder.getBuyer().getCustomerId().toString(),
+                        purchaseOrder.getBuyer().getName(),
+                        purchaseOrder.getBuyer().getAddress()
+                ),
+                new CustomerDTO(
+                        purchaseOrder.getSeller().getCustomerId().toString(),
+                        purchaseOrder.getSeller().getName(),
+                        purchaseOrder.getSeller().getAddress()
+                ),
+                purchaseOrder.getVesselNumber(),
+                purchaseOrder.getOrderLines().stream()
+                        .map(this::convertOrderLineEntityToDTO)
+                        .collect(Collectors.toList())
+        );
+        return dto;
+    }
+
+    private OrderLineDTO convertOrderLineEntityToDTO(OrderLine orderLine) {
+        OrderLineDTO dto = new OrderLineDTO(
+                orderLine.getLineNumber(),
+                orderLine.getMaterialName(),
+                orderLine.getQuantity(),
+                orderLine.getUom()
+        );
+        return dto;
     }
 }
