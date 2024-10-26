@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,6 +46,17 @@ public class PurchaseOrderController {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(openPurchaseOrderDTOs);
+    }
+
+    @GetMapping("/completed")
+    ResponseEntity<List<PurchaseOrderDTO>> getCompletedPurchaseOrders(
+            @RequestParam Date startDate,
+            @RequestParam Date endDate) {
+        List<PurchaseOrder> completedPurchaseOrders = purchaseOrderService.getCompletedPurchaseOrders(startDate, endDate);
+        List<PurchaseOrderDTO> completedPurchaseOrderDTOs = completedPurchaseOrders.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(completedPurchaseOrderDTOs);
     }
 
 
