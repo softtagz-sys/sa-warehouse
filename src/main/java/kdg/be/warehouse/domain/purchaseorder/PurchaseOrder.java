@@ -23,11 +23,11 @@ public class PurchaseOrder {
     @Column(name = "reference_uuid", nullable = false)
     private UUID referenceUUID;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "buyer_id", nullable = false)
     private Customer buyer;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "seller_id", nullable = false)
     private Customer seller;
 

@@ -41,27 +41,18 @@ public class PurchaseOrderController {
         return Map.of("errors", errors);
     }
 
-    // TODO: Ok om hier al entiteiten aan te maken?
     private PurchaseOrder convertToEntity(PurchaseOrderDTO purchaseOrderDTO) {
+        Customer buyer = new Customer(
+                UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()),
+                purchaseOrderDTO.getCustomerParty().getName(),
+                purchaseOrderDTO.getCustomerParty().getAddress()
+        );
 
-        Customer buyer = customerService.findCustomerById(UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()))
-                .orElseGet(
-                        () -> new Customer(
-                                        UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()),
-                                        purchaseOrderDTO.getCustomerParty().getName(),
-                                        purchaseOrderDTO.getCustomerParty().getAddress()
-                                )
-                );
-
-        Customer seller = customerService.findCustomerById(UUID.fromString(purchaseOrderDTO.getSellerParty().getUUID()))
-                .orElseGet(
-                        () -> new Customer(
-                                UUID.fromString(purchaseOrderDTO.getSellerParty().getUUID()),
-                                purchaseOrderDTO.getSellerParty().getName(),
-                                purchaseOrderDTO.getSellerParty().getAddress()
-                        )
-                );
-
+        Customer seller = new Customer(
+                UUID.fromString(purchaseOrderDTO.getSellerParty().getUUID()),
+                purchaseOrderDTO.getSellerParty().getName(),
+                purchaseOrderDTO.getSellerParty().getAddress()
+        );
 
         List<OrderLine> orderLines = purchaseOrderDTO.getOrderLines().stream()
                 .map(this::convertOrderLineDTOToEntity)
@@ -76,6 +67,8 @@ public class PurchaseOrderController {
                 orderLines
         );
     }
+
+
 
     private OrderLine convertOrderLineDTOToEntity(OrderLineDTO orderLineDTO) {
         OrderLine orderLine = new OrderLine();

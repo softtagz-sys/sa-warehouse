@@ -6,6 +6,7 @@ import lombok.Getter;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +16,9 @@ import java.util.UUID;
 public class Invoice {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID invoiceId;
+
 
     private LocalDateTime createdDate;
     private LocalDateTime invoicedDate;
@@ -24,7 +27,7 @@ public class Invoice {
     @ManyToOne
     private Customer customer;
 
-    @OneToMany
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<InvoiceLine> invoiceLines;
 
     public Invoice() {
@@ -33,5 +36,6 @@ public class Invoice {
     public Invoice(Customer customer) {
         this.createdDate = LocalDateTime.now();
         this.customer = customer;
+        this.invoiceLines = new ArrayList<>();
     }
 }

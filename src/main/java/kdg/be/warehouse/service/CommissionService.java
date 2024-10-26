@@ -49,14 +49,16 @@ public class CommissionService {
             double unitPrice = sellPrice.getPrice() * warehouseConfig.getDefaultCommissionOnPOs();
 
             InvoiceLine newInvoiceLine = new InvoiceLine(
-                    i,
+                    i + 1,
                     String.format("Commission %s", orderLine.getMaterialName()),
                     orderLine.getQuantity(),
                     unitPrice,
-                    orderLine.getQuantity() * unitPrice
+                    orderLine.getQuantity() * unitPrice,
+                    newInvoice
             );
 
             newInvoice.getInvoiceLines().add(newInvoiceLine);
+
         }
 
 

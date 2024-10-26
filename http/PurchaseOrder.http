@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ### Complete Purchase Order
-POST http://localhost:8082/api/purchase-orders/complete?sellerId=b33df3fe-71be-4c00-94fc-20f4b83dfe12
+POST http://localhost:8082/api/purchase-orders/complete?sellerId=9ae35800-5fdf-4932-a713-251f49e11012
 Content-Type: application/json
 
 
