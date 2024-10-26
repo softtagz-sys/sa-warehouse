@@ -35,5 +35,13 @@ Content-Type: application/json
 ### Get Open Purchase Orders
 GET http://localhost:8082/api/purchase-orders/open
 
+### Complete Purchase Order
+POST http://localhost:8082/api/purchase-orders/complete?sellerId=9ae35800-5fdf-4932-a713-251f49e11012
+Content-Type: application/json
+
+[
+  "PO123456"
+]
+
 ### Get completed Purchase Orders between dates
 GET http://localhost:8082/api/purchase-orders/completed?startDate=2024-10-25&endDate=2024-10-27

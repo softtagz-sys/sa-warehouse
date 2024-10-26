@@ -12,7 +12,8 @@ import java.util.UUID;
 
 @Repository
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, UUID> {
-    Optional<PurchaseOrder> findByPoNumberAndSeller_customerId(String poNumber, UUID customerId);
+
+    Optional<PurchaseOrder> findByPoNumber(String poNumber);
 
     @Query("SELECT po FROM PurchaseOrder po LEFT JOIN FETCH po.orderLines WHERE po.isCompleted = false")
     List<PurchaseOrder> findOpenPurchaseOrders();

@@ -35,7 +35,7 @@ public class PurchaseOrder {
     @Column(name = "vessel_number")
     private String vesselNumber;
 
-    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<OrderLine> orderLines;
 
     private boolean isCompleted;
