@@ -5,6 +5,7 @@ import kdg.be.warehouse.domain.Customer;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +39,9 @@ public class PurchaseOrder {
     private List<OrderLine> orderLines;
 
     private boolean isCompleted;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date completedDate;
 
     public PurchaseOrder() {
     }

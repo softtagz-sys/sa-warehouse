@@ -56,6 +56,7 @@ public class PurchaseOrderService {
         }
 
         purchaseOrder.setCompleted(true);
+        purchaseOrder.setCompletedDate(new Date());
     }
 
     private PurchaseOrder findPurchaseOrder(UUID sellerId, String poNumber) {
@@ -110,6 +111,6 @@ public class PurchaseOrderService {
     }
 
     public List<PurchaseOrder> getCompletedPurchaseOrders(Date startDate, Date endDate) {
-        return purchaseOrderRepository.findAllByIsCompletedTrueAndCreatedDateBetween(startDate, endDate);
+        return purchaseOrderRepository.findAllByIsCompletedTrueAndCompletedDateBetween(startDate, endDate);
     }
 }

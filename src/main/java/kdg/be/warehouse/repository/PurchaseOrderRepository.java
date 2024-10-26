@@ -15,5 +15,6 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, UU
 
     List<PurchaseOrder> findAllByIsCompletedFalse();
 
-    List<PurchaseOrder> findAllByIsCompletedTrueAndCreatedDateBetween(Date startDate, Date endDate);
+    List<PurchaseOrder> findAllByIsCompletedTrueAndCompletedDateBetween(Date startDate, Date endDate);
+
 }
