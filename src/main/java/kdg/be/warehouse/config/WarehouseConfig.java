@@ -12,5 +12,6 @@ import org.springframework.context.annotation.Configuration;
 public class WarehouseConfig {
 
     private double maxCapacityRatioForNewDeliveries;
+    private double defaultCommissionOnPOs;
 
 }

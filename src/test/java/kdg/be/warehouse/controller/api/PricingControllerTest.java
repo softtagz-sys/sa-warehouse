@@ -35,7 +35,7 @@ class PricingControllerTest {
                         .content("""
                                 {
                                   "newPrice": 3,
-                                  "validFrom": "2024-10-24T14:22:08.4"
+                                  "validFrom": "2024-11-24T14:22:08.4"
                                 }
                                 """))
                 .andExpect(status().isCreated())
@@ -45,10 +45,10 @@ class PricingControllerTest {
                 .andExpect(jsonPath("$.storageCosts").isArray())
                 .andExpect(jsonPath("$.storageCosts[1].validTo").isNotEmpty())
                 .andExpect(jsonPath("$.storageCosts[1].validTo").isString())
-                .andExpect(jsonPath("$.storageCosts[1].validTo").value("2024-10-24T14:22:08.4"))
+                .andExpect(jsonPath("$.storageCosts[1].validTo").value("2024-11-24T14:22:08.4"))
                 .andExpect(jsonPath("$.storageCosts[2].validFrom").isNotEmpty())
                 .andExpect(jsonPath("$.storageCosts[2].validFrom").isString())
-                .andExpect(jsonPath("$.storageCosts[2].validFrom").value("2024-10-24T14:22:08.4"))
+                .andExpect(jsonPath("$.storageCosts[2].validFrom").value("2024-11-24T14:22:08.4"))
                 .andExpect(jsonPath("$.storageCosts[2].validTo").isEmpty())
                 .andExpect(jsonPath("$.storageCosts[2].price").isNumber())
                 .andExpect(jsonPath("$.storageCosts[2].price").value(3));
@@ -64,7 +64,7 @@ class PricingControllerTest {
                         .content("""
                                 {
                                   "newPrice": -1,
-                                  "validFrom": "2024-10-24T14:22:08.4"
+                                  "validFrom": "2024-11-24T14:22:08.4"
                                 }
                                 """))
                 .andExpect(status().isBadRequest());

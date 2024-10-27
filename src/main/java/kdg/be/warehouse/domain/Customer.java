@@ -14,6 +14,7 @@ import java.util.UUID;
 public class Customer {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID customerId;
 
     @Column(unique = true)
@@ -28,6 +29,11 @@ public class Customer {
 
     public Customer(UUID customerId, String name, String address) {
         this.customerId = customerId;
+        this.name = name;
+        this.address = address;
+    }
+
+    public Customer(String name, String address) {
         this.name = name;
         this.address = address;
     }
