@@ -5,6 +5,7 @@ import kdg.be.warehouse.domain.Customer;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,8 +35,13 @@ public class PurchaseOrder {
     @Column(name = "vessel_number")
     private String vesselNumber;
 
-    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<OrderLine> orderLines;
+
+    private boolean isCompleted;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date completedDate;
 
     public PurchaseOrder() {
     }
@@ -47,5 +53,6 @@ public class PurchaseOrder {
         this.seller = seller;
         this.vesselNumber = vesselNumber;
         this.orderLines = orderLines;
+        this.isCompleted = false;
     }
 }
