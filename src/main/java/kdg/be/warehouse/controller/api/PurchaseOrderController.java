@@ -6,6 +6,7 @@ import kdg.be.warehouse.controller.dto.PurchaseOrderDTO;
 import kdg.be.warehouse.domain.Customer;
 import kdg.be.warehouse.domain.purchaseorder.OrderLine;
 import kdg.be.warehouse.domain.purchaseorder.PurchaseOrder;
+import kdg.be.warehouse.service.CustomerService;
 import kdg.be.warehouse.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -23,11 +25,17 @@ import java.util.stream.Collectors;
 public class PurchaseOrderController {
 
     private final PurchaseOrderService purchaseOrderService;
+    private final CustomerService customerService;
 
-    public PurchaseOrderController(PurchaseOrderService purchaseOrderService) {
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, CustomerService customerService) {
         this.purchaseOrderService = purchaseOrderService;
+        this.customerService = customerService;
     }
 
+
+    // TODO Check if Seller has warehouse of specific material
+    // TODO validate if PO number is unique
+    // TODO convert kt to t if needed?? Gaan we dat doen?
     @PostMapping("/receive")
     public void receivePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         PurchaseOrder purchaseOrder = convertToEntity(purchaseOrderDTO);
@@ -119,6 +127,8 @@ public class PurchaseOrderController {
                 orderLines
         );
     }
+
+
 
     private OrderLine convertOrderLineDTOToEntity(OrderLineDTO orderLineDTO) {
         OrderLine orderLine = new OrderLine();
