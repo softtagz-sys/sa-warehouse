@@ -8,9 +8,11 @@ import kdg.be.warehouse.domain.warehouse.Warehouse;
 import kdg.be.warehouse.repository.CustomerRepository;
 import kdg.be.warehouse.repository.MaterialRepository;
 import kdg.be.warehouse.repository.PurchaseOrderRepository;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +35,7 @@ public class PurchaseOrderService {
 
     //TODO: check if user has warehouse of material
     public List<String> completePurchaseOrders(UUID sellerId, List<String> poNumbers) {
-        List<String> errors = List.of();
+        List<String> errors = new ArrayList<>();
         for (String poNumber : poNumbers) {
             try {
                 completeAndInvoicePurchaseOrder(sellerId, poNumber);
@@ -47,7 +49,7 @@ public class PurchaseOrderService {
 
     @Transactional
     public void completeAndInvoicePurchaseOrder(UUID sellerId, String poNumber) {
-        PurchaseOrder purchaseOrder = findPurchaseOrder(sellerId, poNumber);
+        PurchaseOrder purchaseOrder = findPurchaseOrder(poNumber);
         List<OrderLine> orderLines = purchaseOrder.getOrderLines();
         Customer seller = findSeller(sellerId);
 
@@ -56,6 +58,10 @@ public class PurchaseOrderService {
             processOrderLine(seller, material, orderLine);
         }
 
+        purchaseOrder.setCompleted(true);
+        purchaseOrder.setCompletedDate(new Date());
+        purchaseOrderRepository.save(purchaseOrder);
+
         invoiceSeller(seller, purchaseOrder);
     }
 
@@ -63,9 +69,12 @@ public class PurchaseOrderService {
         commissionService.addCommissionInvoice(seller, po);
     }
 
-    private PurchaseOrder findPurchaseOrder(UUID sellerId, String poNumber) {
-        return purchaseOrderRepository.findByPoNumberAndSeller_customerId(poNumber, sellerId)
+    @Transactional
+    protected PurchaseOrder findPurchaseOrder(String poNumber) {
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPoNumber(poNumber)
                 .orElseThrow(() -> new RuntimeException("Purchase Order not found"));
+        Hibernate.initialize(purchaseOrder.getOrderLines());
+        return purchaseOrder;
     }
 
     private Material findMaterial(String materialName) {
@@ -110,4 +119,18 @@ public class PurchaseOrderService {
                 .orElseGet(() -> customerRepository.save(customer));
     }
 
+
+    @Transactional(readOnly = true)
+    public List<PurchaseOrder> getOpenPurchaseOrders() {
+        List<PurchaseOrder> openPurchaseOrders = purchaseOrderRepository.findOpenPurchaseOrders();
+        openPurchaseOrders.forEach(purchaseOrder -> purchaseOrder.getOrderLines().size());
+        return openPurchaseOrders;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PurchaseOrder> getCompletedPurchaseOrders(Date startDate, Date endDate) {
+        List<PurchaseOrder> completedPurchaseOrders = purchaseOrderRepository.findAllByIsCompletedTrueAndCompletedDateBetween(startDate, endDate);
+        completedPurchaseOrders.forEach(purchaseOrder -> purchaseOrder.getOrderLines().size());
+        return completedPurchaseOrders;
+    }
 }
