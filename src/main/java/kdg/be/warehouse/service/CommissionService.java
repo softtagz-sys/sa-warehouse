@@ -31,37 +31,39 @@ public class CommissionService {
     }
 
     public Optional<Invoice> addCommissionInvoice(Customer seller, PurchaseOrder po) {
+
         Invoice newInvoice = new Invoice(seller);
 
-        for (int i = 0; i < po.getOrderLines().size(); i++) {
-            OrderLine orderLine = po.getOrderLines().get(i);
+        for (OrderLine orderLine : po.getOrderLines()) {
 
-            PricingInfo sellPrice = materialRepository
-                    .findByNameIgnoreCaseWithPrices(orderLine.getMaterialName())
-                    .map(Material::getPrices)
-                    .orElseThrow(() -> new RuntimeException("Unable to find material " + orderLine.getMaterialName()))
-                    .stream()
-                    .filter(p -> p.getPriceType() == PriceType.SELL_PRICE)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Sell price not found for material " + orderLine.getMaterialName()));
-
-
-            double unitPrice = sellPrice.getPrice() * warehouseConfig.getDefaultCommissionOnPOs();
-
-            InvoiceLine newInvoiceLine = new InvoiceLine(
-                    i + 1,
-                    String.format("Commission %s", orderLine.getMaterialName()),
-                    orderLine.getQuantity(),
-                    unitPrice,
-                    orderLine.getQuantity() * unitPrice,
-                    newInvoice
-            );
-
+            InvoiceLine newInvoiceLine = calculateInvoiceLine(newInvoice, orderLine);
             newInvoice.getInvoiceLines().add(newInvoiceLine);
-
         }
 
-
         return Optional.of(invoiceRepository.save(newInvoice));
+    }
+
+
+    private InvoiceLine calculateInvoiceLine(Invoice invoice, OrderLine orderLine) {
+
+        PricingInfo sellPrice = materialRepository
+                .findByNameIgnoreCaseWithPrices(orderLine.getMaterialName())
+                .map(Material::getPrices)
+                .orElseThrow(() -> new RuntimeException("Unable to find material " + orderLine.getMaterialName()))
+                .stream()
+                .filter(p -> p.getPriceType() == PriceType.SELL_PRICE)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Sell price not found for material " + orderLine.getMaterialName()));
+
+        double unitPrice = sellPrice.getPrice() * warehouseConfig.getDefaultCommissionOnPOs();
+
+        return new InvoiceLine(
+                orderLine.getLineNumber(),
+                String.format("Commission %s", orderLine.getMaterialName()),
+                orderLine.getQuantity(),
+                unitPrice,
+                orderLine.getQuantity() * unitPrice,
+                invoice
+        );
     }
 }

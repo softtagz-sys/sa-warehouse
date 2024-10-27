@@ -32,6 +32,10 @@ public class PurchaseOrderController {
         this.customerService = customerService;
     }
 
+
+    // TODO Check if Seller has warehouse of specific material
+    // TODO validate if PO number is unique
+    // TODO convert kt to t if needed?? Gaan we dat doen?
     @PostMapping("/receive")
     public void receivePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         PurchaseOrder purchaseOrder = convertToEntity(purchaseOrderDTO);

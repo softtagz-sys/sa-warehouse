@@ -11,7 +11,7 @@ Content-Type: application/json
     "address": "Trammesantlei 122, Schoten, Belgium "
   },
   "sellerParty": {
-    "UUID": "b33df3fe-71be-4c00-94fc-20f4b83dfe12",
+    "UUID": "9ae35800-5fdf-4932-a713-251f49e11012",
     "name": "De klant van KDG",
     "address": "Het adres van de klant van KDG"
   },
@@ -21,13 +21,13 @@ Content-Type: application/json
       "lineNumber": 1,
       "materialName": "PetCoke",
       "quantity": 100,
-      "uom": "kt"
+      "uom": "t"
     },
     {
       "lineNumber": 2,
       "materialName": "Slak",
       "quantity": 50,
-      "uom": "kt"
+      "uom": "t"
     }
   ]
 }
