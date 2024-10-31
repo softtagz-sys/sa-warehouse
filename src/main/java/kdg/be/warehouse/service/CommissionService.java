@@ -11,10 +11,8 @@ import kdg.be.warehouse.domain.purchaseorder.OrderLine;
 import kdg.be.warehouse.domain.purchaseorder.PurchaseOrder;
 import kdg.be.warehouse.repository.InvoiceRepository;
 import kdg.be.warehouse.repository.MaterialRepository;
-import kdg.be.warehouse.repository.WarehouseRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,7 +41,6 @@ public class CommissionService {
         return Optional.of(invoiceRepository.save(newInvoice));
     }
 
-
     private InvoiceLine calculateInvoiceLine(Invoice invoice, OrderLine orderLine) {
 
         PricingInfo sellPrice = materialRepository
@@ -55,14 +52,15 @@ public class CommissionService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Sell price not found for material " + orderLine.getMaterialName()));
 
-        double unitPrice = sellPrice.getPrice() * warehouseConfig.getDefaultCommissionOnPOs();
+        float unitPrice = Math.round(sellPrice.getPrice() * warehouseConfig.getDefaultCommissionOnPOs() * 100.0) / 100.0f;
+        float totalPrice = Math.round(orderLine.getQuantity() * unitPrice * 100.0) / 100.0f;
 
         return new InvoiceLine(
                 orderLine.getLineNumber(),
                 String.format("Commission %s", orderLine.getMaterialName()),
                 orderLine.getQuantity(),
                 unitPrice,
-                orderLine.getQuantity() * unitPrice,
+                totalPrice,
                 invoice
         );
     }

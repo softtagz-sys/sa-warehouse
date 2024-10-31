@@ -25,23 +25,21 @@ import java.util.stream.Collectors;
 public class PurchaseOrderController {
 
     private final PurchaseOrderService purchaseOrderService;
-    private final CustomerService customerService;
 
-    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, CustomerService customerService) {
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
-        this.customerService = customerService;
     }
-
 
     // TODO Check if Seller has warehouse of specific material
     // TODO validate if PO number is unique
-    // TODO convert kt to t if needed?? Gaan we dat doen?
+    // TODO receivePurchaseOrder aanpassen naar 201?
     @PostMapping("/receive")
     public void receivePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         PurchaseOrder purchaseOrder = convertToEntity(purchaseOrderDTO);
         purchaseOrderService.savePurchaseOrder(purchaseOrder);
     }
 
+    //TODO ook hier statuscode teruggeven?
     @PostMapping("/complete")
     public Map<String, Object> completePurchaseOrders(@RequestParam String sellerId, @RequestBody List<String> poNumbers) {
         List<String> errors = purchaseOrderService.completePurchaseOrders(UUID.fromString(sellerId), poNumbers);
@@ -127,8 +125,6 @@ public class PurchaseOrderController {
                 orderLines
         );
     }
-
-
 
     private OrderLine convertOrderLineDTOToEntity(OrderLineDTO orderLineDTO) {
         OrderLine orderLine = new OrderLine();

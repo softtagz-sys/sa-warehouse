@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <title>Invoice</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/webjars/bootstrap/5.1.3/css/bootstrap.min.css"></link>
+    <script defer="defer" src="https://cdn.jsdelivr.net/webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+
+
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .invoice-header {
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .invoice-footer {
+            border-top: 2px solid #000;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            text-align: right;
+        }
+
+        .table th:first-child, .table td:first-child {
+            text-align: left;
+        }
+
+        .total {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="invoice-header">
+        <h1>Invoice</h1>
+        <h2>Krystal Distribution Group</h2>
+        <p>Nationalestraat 5<br></br>
+            2000 Antwerpen</p>
+    </div>
+
+    <div class="customer-info">
+        <h5>Bill To:</h5>
+        <p th:text="${invoice.customer.name}">Customer Name</p>
+        <p th:text="${invoice.customer.address}">Customer Address</p>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Item Description</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Line Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="line : ${invoice.invoiceLines}">
+            <td th:text="${line.description}">Item Description</td>
+            <td th:text="${line.amountOfUnits}">1</td>
+            <td th:text="${line.unitPrice}">0.00</td>
+            <td th:text="${line.totalPrice}">0.00</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="total">
+        <p th:text="'Total Amount Due: $' + ${totalAmount}">Total Amount Due: $0.00</p>
+    </div>
+
+    <div class="invoice-footer">
+        <p>Thank you for your business!</p>
+    </div>
+</div>
+</body>
+</html>
