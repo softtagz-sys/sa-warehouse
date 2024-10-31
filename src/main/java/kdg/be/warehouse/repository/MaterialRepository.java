@@ -25,6 +25,4 @@ public interface MaterialRepository extends JpaRepository<Material, UUID> {
     Optional<Material> findByNameIgnoreCaseWithPrices(String name);
 
 
-
-
 }
