@@ -29,7 +29,6 @@ public class PurchaseOrderController {
 
     // TODO Check if Seller has warehouse of specific material
     // TODO validate if PO number is unique
-    // TODO receivePurchaseOrder aanpassen naar 201?
     @PostMapping("/receive")
     public ResponseEntity<Void> receivePurchaseOrder(@RequestBody @Valid PurchaseOrderDTO purchaseOrderDTO) {
         try {
