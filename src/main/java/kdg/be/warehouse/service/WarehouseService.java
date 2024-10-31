@@ -48,8 +48,7 @@ public class WarehouseService {
     public boolean hasWarehouseOfMaterial(Customer customer, Material material) {
         return warehouseRepository.findByOwnerAndMaterial(customer, material).isPresent();
     }
-
-    // TODO Refactor this method --> no .get() without check
+    
     public Warehouse getWarehouseOfMaterialFromCustomer(Customer customer, Material material) {
         return warehouseRepository.findByOwnerAndMaterial(customer, material)
                 .orElseThrow(() -> new RuntimeException("Warehouse not found"));
