@@ -1,12 +1,9 @@
 package kdg.be.warehouse.controller.api;
 
+import kdg.be.warehouse.controller.dto.mapper.InvoiceMapper;
 import kdg.be.warehouse.controller.dto.out.InvoiceDto;
-import kdg.be.warehouse.controller.dto.out.InvoiceLineDto;
 import kdg.be.warehouse.domain.invoicing.Invoice;
-import kdg.be.warehouse.domain.invoicing.InvoiceLine;
 import kdg.be.warehouse.service.InvoiceService;
-import kdg.be.warehouse.utilities.PDFInvoiceGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +17,11 @@ import java.util.List;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
+    private final InvoiceMapper invoiceMapper;
 
-    public InvoiceController(InvoiceService invoiceService) {
+    public InvoiceController(InvoiceService invoiceService, InvoiceMapper invoiceMapper) {
         this.invoiceService = invoiceService;
+        this.invoiceMapper = invoiceMapper;
     }
 
     @GetMapping("/upcoming/{customerName}")
@@ -32,19 +31,7 @@ public class InvoiceController {
 
             List<InvoiceDto> invoiceDtoList = invoiceList
                     .stream()
-                    .map(i -> new InvoiceDto(
-                            i.getInvoiceId(),
-                            i.getCreatedDate(),
-                            i.getCustomer().getName(),
-                            i.getInvoiceLines().stream().map(il -> new InvoiceLineDto(
-                                    il.getLineNumber(),
-                                    il.getDescription(),
-                                    il.getAmountOfUnits(),
-                                    il.getUnitPrice(),
-                                    il.getTotalPrice()
-                            )).toList(),
-                            i.getInvoiceLines().stream().map(InvoiceLine::getTotalPrice).reduce(0f, Float::sum)
-                    ))
+                    .map(invoiceMapper::invoiceDto)
                     .toList();
 
             return ResponseEntity.ok(invoiceDtoList);
