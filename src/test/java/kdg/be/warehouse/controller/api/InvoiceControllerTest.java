@@ -61,7 +61,7 @@ class InvoiceControllerTest {
                                               ]
                                             }
                                         """))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         mockMvc.perform(
                 post("/api/purchase-orders/complete")

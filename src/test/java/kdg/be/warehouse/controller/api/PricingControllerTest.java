@@ -84,8 +84,6 @@ class PricingControllerTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
-
-        // TODO ADD expects JSON --> Controller Advise want de @valid geeft wel 400 maar niet clean.
     }
 
     @Test
@@ -118,7 +116,7 @@ class PricingControllerTest {
     @Test
     @Sql(value = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/sql/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    public void addingNewSellPriceShouldReturn200() throws Exception {
+    public void changingSellPriceShouldReturn200() throws Exception {
         LocalDateTime now = LocalDateTime.now();
 
         var mvcResult = mockMvc.perform(patch("/api/pricing/gips/sellPrice")
@@ -149,7 +147,7 @@ class PricingControllerTest {
     @Test
     @Sql(value = "/sql/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/sql/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    public void addingNewSellPriceWithNegativePriceShouldReturn400() throws Exception {
+    public void changingSellPriceWithNegativePriceShouldReturn400() throws Exception {
         mockMvc.perform(patch("/api/pricing/gips/sellPrice")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)

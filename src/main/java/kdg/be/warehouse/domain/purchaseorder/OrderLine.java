@@ -21,10 +21,9 @@ public class OrderLine {
 
     @Column(name = "description")
     private String description;
-
-    // TODO necessary to change this to double?
+    
     @Column(name = "quantity", nullable = false)
-    private int quantity;
+    private float quantity;
 
     @Column(name = "uom", nullable = false)
     private String uom;
@@ -36,7 +35,7 @@ public class OrderLine {
     public OrderLine() {
     }
 
-    public OrderLine(int lineNumber, String materialName, String description, int quantity, String uom) {
+    public OrderLine(int lineNumber, String materialName, String description, float quantity, String uom) {
         this.lineNumber = lineNumber;
         this.materialName = materialName;
         this.description = description;

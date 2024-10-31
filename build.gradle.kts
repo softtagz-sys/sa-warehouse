@@ -29,6 +29,7 @@ dependencies {
     implementation("org.webjars:bootstrap:5.3.3")
     implementation("org.webjars:webjars-locator-core:0.59")
     implementation("org.thymeleaf:thymeleaf:3.1.2.RELEASE")
+    implementation("org.mapstruct:mapstruct:1.6.2")
     implementation("org.xhtmlrenderer:flying-saucer-pdf:9.5.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -40,7 +41,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
-
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.2")
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.3.Final")
 

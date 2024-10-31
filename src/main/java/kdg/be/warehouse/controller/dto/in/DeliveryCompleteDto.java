@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class DeliveryCompleteDto {
-
+    
     private final String customerId;
     private final String rawMaterial;
     private final double weight;
