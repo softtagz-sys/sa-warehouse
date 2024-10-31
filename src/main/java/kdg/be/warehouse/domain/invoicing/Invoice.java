@@ -3,6 +3,7 @@ package kdg.be.warehouse.domain.invoicing;
 import jakarta.persistence.*;
 import kdg.be.warehouse.domain.Customer;
 import lombok.Getter;
+import lombok.Setter;
 
 
 import java.time.LocalDateTime;
@@ -21,7 +22,11 @@ public class Invoice {
 
 
     private LocalDateTime createdDate;
+
+    @Setter
     private LocalDateTime invoicedDate;
+
+    @Setter
     private LocalDateTime completedDate;
 
     @ManyToOne
@@ -37,5 +42,11 @@ public class Invoice {
         this.createdDate = LocalDateTime.now();
         this.customer = customer;
         this.invoiceLines = new ArrayList<>();
+    }
+
+    public Invoice(Customer customer, List<InvoiceLine> invoiceLines) {
+        this.customer = customer;
+        this.invoiceLines = invoiceLines;
+        this.createdDate = LocalDateTime.now();
     }
 }

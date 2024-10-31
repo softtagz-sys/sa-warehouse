@@ -31,12 +31,10 @@ class CommissionServiceUnitTest {
     @Autowired
     private CommissionService commissionService;
 
-    @MockBean
-    private MaterialRepository materialRepository;
-    @MockBean
-    private WarehouseConfig warehouseConfig;
-    @MockBean
-    private InvoiceRepository invoiceRepository;
+    @MockBean private MaterialRepository materialRepository;
+    @MockBean private WarehouseConfig warehouseConfig;
+    @MockBean private InvoiceRepository invoiceRepository;
+    @MockBean private InvoiceService invoiceService; //SPRING MAGIC: needed else test fails on @scheduled annotation
 
 
     @Test
@@ -54,7 +52,7 @@ class CommissionServiceUnitTest {
 
 
         given(materialRepository.findByNameIgnoreCaseWithPrices("Petcoke")).willReturn(Optional.of(material));
-        given(warehouseConfig.getDefaultCommissionOnPOs()).willReturn(0.01);
+        given(warehouseConfig.getDefaultCommissionOnPOs()).willReturn(0.01f);
         given(invoiceRepository.save(any(Invoice.class))).willReturn(new Invoice());
 
         // Act
@@ -81,23 +79,23 @@ class CommissionServiceUnitTest {
         // Arrange
         Customer seller = new Customer("verkoper", "antwerpen");
         Customer buyer = new Customer("koper", "antwerpen");
-        OrderLine orderLine = new OrderLine(1, "Petcoke", "NA", 100, "t");
-        OrderLine orderLine2 = new OrderLine(2, "Gips", "NA", 100, "t");
+        OrderLine orderLine = new OrderLine(1, "Ijzererts", "NA", 100000, "t");
+        OrderLine orderLine2 = new OrderLine(2, "Gips", "NA", 50000, "t");
 
         PurchaseOrder po = new PurchaseOrder("TEST", UUID.randomUUID(), buyer, seller, "boot", Arrays.asList(orderLine, orderLine2));
 
-        Material material = new Material("Petcoke", "NA");
+        Material material = new Material("Ijzererts", "NA");
         Material material2 = new Material("Gips", "NA");
-        PricingInfo sellPrice = new PricingInfo(100, LocalDateTime.of(2024, 1, 1, 1, 1), PriceType.SELL_PRICE, material);
-        PricingInfo sellPrice2 = new PricingInfo(10, LocalDateTime.of(2024, 1, 1, 1, 1), PriceType.SELL_PRICE, material2);
+        PricingInfo sellPrice = new PricingInfo(110, LocalDateTime.of(2024, 1, 1, 1, 1), PriceType.SELL_PRICE, material);
+        PricingInfo sellPrice2 = new PricingInfo(13, LocalDateTime.of(2024, 1, 1, 1, 1), PriceType.SELL_PRICE, material2);
         material.setPrices(List.of(sellPrice));
         material2.setPrices(List.of(sellPrice2));
 
 
-        given(materialRepository.findByNameIgnoreCaseWithPrices("Petcoke")).willReturn(Optional.of(material));
+        given(materialRepository.findByNameIgnoreCaseWithPrices("Ijzererts")).willReturn(Optional.of(material));
         given(materialRepository.findByNameIgnoreCaseWithPrices("Gips")).willReturn(Optional.of(material2));
 
-        given(warehouseConfig.getDefaultCommissionOnPOs()).willReturn(0.01);
+        given(warehouseConfig.getDefaultCommissionOnPOs()).willReturn(0.01f);
         given(invoiceRepository.save(any(Invoice.class))).willReturn(new Invoice());
 
         // Act
@@ -108,7 +106,7 @@ class CommissionServiceUnitTest {
 
         // Assert
         assertEquals(2, capturedInvoice.getInvoiceLines().size());
-        assertEquals(110, capturedInvoice.getInvoiceLines().stream().map(InvoiceLine::getTotalPrice).reduce(0.0, Double::sum));
+        assertEquals(116500, capturedInvoice.getInvoiceLines().stream().map(InvoiceLine::getTotalPrice).reduce(0.0f, Float::sum), 0.001);
     }
 
 
@@ -123,7 +121,7 @@ class CommissionServiceUnitTest {
 
 
         given(materialRepository.findByNameIgnoreCaseWithPrices("NonExistentMaterial")).willReturn(Optional.empty());
-        given(warehouseConfig.getDefaultCommissionOnPOs()).willReturn(0.01);
+        given(warehouseConfig.getDefaultCommissionOnPOs()).willReturn(0.01f);
         given(invoiceRepository.save(any(Invoice.class))).willReturn(new Invoice());
 
         // Act && Assert
@@ -146,7 +144,7 @@ class CommissionServiceUnitTest {
 
 
         given(materialRepository.findByNameIgnoreCaseWithPrices("Petcoke")).willReturn(Optional.of(material));
-        given(warehouseConfig.getDefaultCommissionOnPOs()).willReturn(0.01);
+        given(warehouseConfig.getDefaultCommissionOnPOs()).willReturn(0.01f);
         given(invoiceRepository.save(any(Invoice.class))).willReturn(new Invoice());
 
         // Act && Assert

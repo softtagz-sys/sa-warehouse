@@ -3,6 +3,7 @@ package kdg.be.warehouse.controller.api;
 import jakarta.validation.Valid;
 import kdg.be.warehouse.controller.dto.in.NewSellPriceDto;
 import kdg.be.warehouse.controller.dto.in.NewStorageCostDto;
+import kdg.be.warehouse.controller.dto.mapper.MaterialPricingMapper;
 import kdg.be.warehouse.controller.dto.out.MaterialPricingDto;
 import kdg.be.warehouse.controller.dto.out.PricingInfoDto;
 import kdg.be.warehouse.domain.material.Material;
@@ -21,9 +22,11 @@ import java.util.Optional;
 public class PricingController {
 
     private final PricingService pricingService;
+    private final MaterialPricingMapper materialPricingMapper;
 
-    public PricingController(PricingService pricingService) {
+    public PricingController(PricingService pricingService, MaterialPricingMapper materialPricingMapper) {
         this.pricingService = pricingService;
+        this.materialPricingMapper = materialPricingMapper;
     }
 
     @PostMapping("/{materialName}/storageCost")
@@ -31,7 +34,7 @@ public class PricingController {
         try {
             Optional<Material> materialOptional = pricingService.changeStorageCost(materialName, newStorageCostDto.getValidFrom(), newStorageCostDto.getNewPrice());
             if (materialOptional.isPresent()) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(this.mapToDto(materialOptional.get()));
+                return ResponseEntity.status(HttpStatus.CREATED).body(materialPricingMapper.materialPricingDto(materialOptional.get()));
             } else {
                 return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON).build();
             }
@@ -46,36 +49,12 @@ public class PricingController {
         try {
              Optional<Material> materialOptional = pricingService.changeSellPrice(materialName, newSellPriceDto.getSellPrice());
              if (materialOptional.isPresent()) {
-                return ResponseEntity.ok().body(this.mapToDto(materialOptional.get()));
+                return ResponseEntity.ok().body(materialPricingMapper.materialPricingDto(materialOptional.get()));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).build();
             }
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).build();
         }
-    }
-
-    private MaterialPricingDto mapToDto(Material material) {
-        return new MaterialPricingDto(
-                material.getMaterialId(),
-                material.getName(),
-                material.getPrices().stream()
-                        .filter(m -> m.getPriceType() == PriceType.SELL_PRICE)
-                        .map(this::mapToDto)
-                        .toList().getFirst(),
-                material.getPrices().stream()
-                        .filter(m -> m.getPriceType() == PriceType.STORAGE_COST)
-                        .map(this::mapToDto)
-                        .toList()
-        );
-    }
-
-    private PricingInfoDto mapToDto(PricingInfo pricingInfo) {
-        return new PricingInfoDto(
-                pricingInfo.getPricingInfoId(),
-                pricingInfo.getPrice(),
-                pricingInfo.getValidFrom(),
-                pricingInfo.getValidTo()
-        );
     }
 }

@@ -51,7 +51,8 @@ public class WarehouseService {
 
     // TODO Refactor this method --> no .get() without check
     public Warehouse getWarehouseOfMaterialFromCustomer(Customer customer, Material material) {
-        return warehouseRepository.findByOwnerAndMaterial(customer, material).get();
+        return warehouseRepository.findByOwnerAndMaterial(customer, material)
+                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
     }
 
     public Optional<Boolean> getAvailabilityStatus(UUID customerId, String materialName) {

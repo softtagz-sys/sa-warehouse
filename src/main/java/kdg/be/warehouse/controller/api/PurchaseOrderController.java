@@ -1,14 +1,10 @@
 package kdg.be.warehouse.controller.api;
 
-import kdg.be.warehouse.controller.dto.CustomerDTO;
-import kdg.be.warehouse.controller.dto.OrderLineDTO;
+import jakarta.validation.Valid;
 import kdg.be.warehouse.controller.dto.PurchaseOrderDTO;
-import kdg.be.warehouse.domain.Customer;
-import kdg.be.warehouse.domain.purchaseorder.OrderLine;
+import kdg.be.warehouse.controller.dto.mapper.PurchaseOrderMapper;
 import kdg.be.warehouse.domain.purchaseorder.PurchaseOrder;
-import kdg.be.warehouse.service.CustomerService;
 import kdg.be.warehouse.service.PurchaseOrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,23 +20,27 @@ import java.util.stream.Collectors;
 public class PurchaseOrderController {
 
     private final PurchaseOrderService purchaseOrderService;
-    private final CustomerService customerService;
+    private final PurchaseOrderMapper purchaseorderMapper;
 
-    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, CustomerService customerService) {
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, PurchaseOrderMapper purchaseorderMapper) {
         this.purchaseOrderService = purchaseOrderService;
-        this.customerService = customerService;
+        this.purchaseorderMapper = purchaseorderMapper;
     }
-
 
     // TODO Check if Seller has warehouse of specific material
     // TODO validate if PO number is unique
-    // TODO convert kt to t if needed?? Gaan we dat doen?
+    // TODO receivePurchaseOrder aanpassen naar 201?
     @PostMapping("/receive")
-    public void receivePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
-        PurchaseOrder purchaseOrder = convertToEntity(purchaseOrderDTO);
-        purchaseOrderService.savePurchaseOrder(purchaseOrder);
+    public ResponseEntity<Void> receivePurchaseOrder(@RequestBody @Valid PurchaseOrderDTO purchaseOrderDTO) {
+        try {
+            purchaseOrderService.savePurchaseOrder(purchaseorderMapper.purchaseOrder(purchaseOrderDTO));
+            return ResponseEntity.status(201).build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
+    //TODO ook hier statuscode teruggeven?
     @PostMapping("/complete")
     public Map<String, Object> completePurchaseOrders(@RequestParam String sellerId, @RequestBody List<String> poNumbers) {
         List<String> errors = purchaseOrderService.completePurchaseOrders(UUID.fromString(sellerId), poNumbers);
@@ -52,8 +51,8 @@ public class PurchaseOrderController {
     public ResponseEntity<List<PurchaseOrderDTO>> getOpenPurchaseOrders() {
         List<PurchaseOrder> openPurchaseOrders = purchaseOrderService.getOpenPurchaseOrders();
         List<PurchaseOrderDTO> openPurchaseOrderDTOs = openPurchaseOrders.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .map(purchaseorderMapper::purchaseOrderDTO)
+                .toList();
         return ResponseEntity.ok(openPurchaseOrderDTOs);
     }
 
@@ -61,81 +60,11 @@ public class PurchaseOrderController {
     ResponseEntity<List<PurchaseOrderDTO>> getCompletedPurchaseOrders(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
+        
         List<PurchaseOrder> completedPurchaseOrders = purchaseOrderService.getCompletedPurchaseOrders(startDate, endDate);
         List<PurchaseOrderDTO> completedPurchaseOrderDTOs = completedPurchaseOrders.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .map(purchaseorderMapper::purchaseOrderDTO)
+                .toList();
         return ResponseEntity.ok(completedPurchaseOrderDTOs);
-    }
-
-    private PurchaseOrderDTO convertToDTO(PurchaseOrder purchaseOrder) {
-        PurchaseOrderDTO dto = new PurchaseOrderDTO(
-                purchaseOrder.getPoNumber(),
-                purchaseOrder.getReferenceUUID().toString(),
-                new CustomerDTO(
-                        purchaseOrder.getBuyer().getCustomerId().toString(),
-                        purchaseOrder.getBuyer().getName(),
-                        purchaseOrder.getBuyer().getAddress()
-                ),
-                new CustomerDTO(
-                        purchaseOrder.getSeller().getCustomerId().toString(),
-                        purchaseOrder.getSeller().getName(),
-                        purchaseOrder.getSeller().getAddress()
-                ),
-                purchaseOrder.getVesselNumber(),
-                purchaseOrder.getOrderLines().stream()
-                        .map(this::convertOrderLineEntityToDTO)
-                        .collect(Collectors.toList())
-        );
-        return dto;
-    }
-
-    private OrderLineDTO convertOrderLineEntityToDTO(OrderLine orderLine) {
-        OrderLineDTO dto = new OrderLineDTO(
-                orderLine.getLineNumber(),
-                orderLine.getMaterialName(),
-                orderLine.getQuantity(),
-                orderLine.getUom()
-        );
-        return dto;
-    }
-
-
-    private PurchaseOrder convertToEntity(PurchaseOrderDTO purchaseOrderDTO) {
-        Customer buyer = new Customer(
-                UUID.fromString(purchaseOrderDTO.getCustomerParty().getUUID()),
-                purchaseOrderDTO.getCustomerParty().getName(),
-                purchaseOrderDTO.getCustomerParty().getAddress()
-        );
-
-        Customer seller = new Customer(
-                UUID.fromString(purchaseOrderDTO.getSellerParty().getUUID()),
-                purchaseOrderDTO.getSellerParty().getName(),
-                purchaseOrderDTO.getSellerParty().getAddress()
-        );
-
-        List<OrderLine> orderLines = purchaseOrderDTO.getOrderLines().stream()
-                .map(this::convertOrderLineDTOToEntity)
-                .collect(Collectors.toList());
-
-        return new PurchaseOrder(
-                purchaseOrderDTO.getPoNumber(),
-                UUID.fromString(purchaseOrderDTO.getReferenceUUID()),
-                buyer,
-                seller,
-                purchaseOrderDTO.getVesselNumber(),
-                orderLines
-        );
-    }
-
-
-
-    private OrderLine convertOrderLineDTOToEntity(OrderLineDTO orderLineDTO) {
-        OrderLine orderLine = new OrderLine();
-        orderLine.setLineNumber(orderLineDTO.getLineNumber());
-        orderLine.setMaterialName(orderLineDTO.getMaterialName());
-        orderLine.setQuantity(orderLineDTO.getQuantity());
-        orderLine.setUom(orderLineDTO.getUom());
-        return orderLine;
     }
 }

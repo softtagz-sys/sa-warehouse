@@ -43,7 +43,6 @@ public class PurchaseOrderService {
                 errors.add(e.getMessage());
             }
         }
-
         return errors;
     }
 
@@ -73,7 +72,7 @@ public class PurchaseOrderService {
     protected PurchaseOrder findPurchaseOrder(String poNumber, UUID sellerId) {
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPoNumberAndSeller_CustomerId(poNumber, sellerId)
                 .orElseThrow(() -> new RuntimeException("Purchase Order not found"));
-        Hibernate.initialize(purchaseOrder.getOrderLines());
+        Hibernate.initialize(purchaseOrder.getOrderLines()); // todo aanpassen
         return purchaseOrder;
     }
 
@@ -122,15 +121,11 @@ public class PurchaseOrderService {
 
     @Transactional(readOnly = true)
     public List<PurchaseOrder> getOpenPurchaseOrders() {
-        List<PurchaseOrder> openPurchaseOrders = purchaseOrderRepository.findOpenPurchaseOrders();
-        openPurchaseOrders.forEach(purchaseOrder -> purchaseOrder.getOrderLines().size());
-        return openPurchaseOrders;
+        return purchaseOrderRepository.findOpenPurchaseOrders();
     }
 
     @Transactional(readOnly = true)
     public List<PurchaseOrder> getCompletedPurchaseOrders(Date startDate, Date endDate) {
-        List<PurchaseOrder> completedPurchaseOrders = purchaseOrderRepository.findAllByIsCompletedTrueAndCompletedDateBetween(startDate, endDate);
-        completedPurchaseOrders.forEach(purchaseOrder -> purchaseOrder.getOrderLines().size());
-        return completedPurchaseOrders;
+        return purchaseOrderRepository.findAllByIsCompletedTrueAndCompletedDateBetween(startDate, endDate);
     }
 }

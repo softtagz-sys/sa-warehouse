@@ -20,9 +20,9 @@ public class InvoiceLine {
 
     private String description;
 
-    private double amountOfUnits;
-    private double unitPrice;
-    private double totalPrice;
+    private float amountOfUnits;
+    private float unitPrice;
+    private float totalPrice;
 
     @ManyToOne
     @JoinColumn(name = "invoice_id", nullable = false)
@@ -31,7 +31,7 @@ public class InvoiceLine {
     public InvoiceLine() {
     }
 
-    public InvoiceLine(int lineNumber, String description, double amountOfUnits, double unitPrice, double totalPrice, Invoice invoice) {
+    public InvoiceLine(int lineNumber, String description, float amountOfUnits, float unitPrice, float totalPrice, Invoice invoice) {
         this.lineNumber = lineNumber;
         this.description = description;
         this.amountOfUnits = amountOfUnits;

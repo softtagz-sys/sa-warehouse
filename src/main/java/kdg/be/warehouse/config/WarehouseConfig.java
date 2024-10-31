@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class WarehouseConfig {
 
     private double maxCapacityRatioForNewDeliveries;
-    private double defaultCommissionOnPOs;
+    private float defaultCommissionOnPOs;
+    private String cronStorageCosts;
+    private String cronTimeZone;
 
 }
