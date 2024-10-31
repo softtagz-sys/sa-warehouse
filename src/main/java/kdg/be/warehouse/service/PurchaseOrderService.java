@@ -49,7 +49,7 @@ public class PurchaseOrderService {
 
     @Transactional
     public void completeAndInvoicePurchaseOrder(UUID sellerId, String poNumber) {
-        PurchaseOrder purchaseOrder = findPurchaseOrder(poNumber);
+        PurchaseOrder purchaseOrder = findPurchaseOrder(poNumber, sellerId);
         List<OrderLine> orderLines = purchaseOrder.getOrderLines();
         Customer seller = findSeller(sellerId);
 
@@ -70,8 +70,8 @@ public class PurchaseOrderService {
     }
 
     @Transactional
-    protected PurchaseOrder findPurchaseOrder(String poNumber) {
-        PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPoNumber(poNumber)
+    protected PurchaseOrder findPurchaseOrder(String poNumber, UUID sellerId) {
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPoNumberAndSeller_CustomerId(poNumber, sellerId)
                 .orElseThrow(() -> new RuntimeException("Purchase Order not found"));
         Hibernate.initialize(purchaseOrder.getOrderLines());
         return purchaseOrder;

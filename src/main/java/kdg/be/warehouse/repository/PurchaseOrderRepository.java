@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, UUID> {
 
-    Optional<PurchaseOrder> findByPoNumber(String poNumber);
+    Optional<PurchaseOrder> findByPoNumberAndSeller_CustomerId(String poNumber, UUID sellerId);
 
     @Query("SELECT po FROM PurchaseOrder po LEFT JOIN FETCH po.orderLines WHERE po.isCompleted = false")
     List<PurchaseOrder> findOpenPurchaseOrders();
