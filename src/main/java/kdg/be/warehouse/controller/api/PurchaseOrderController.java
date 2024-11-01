@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import kdg.be.warehouse.controller.dto.PurchaseOrderDTO;
 import kdg.be.warehouse.controller.dto.mapper.PurchaseOrderMapper;
 import kdg.be.warehouse.domain.purchaseorder.PurchaseOrder;
+import kdg.be.warehouse.exceptions.InvalidSellerOrMaterialException;
+import kdg.be.warehouse.exceptions.POConflictException;
 import kdg.be.warehouse.service.PurchaseOrderService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/purchase-orders")
@@ -27,23 +28,28 @@ public class PurchaseOrderController {
         this.purchaseorderMapper = purchaseorderMapper;
     }
 
-    // TODO Check if Seller has warehouse of specific material
-    // TODO validate if PO number is unique
     @PostMapping("/receive")
     public ResponseEntity<Void> receivePurchaseOrder(@RequestBody @Valid PurchaseOrderDTO purchaseOrderDTO) {
         try {
             purchaseOrderService.savePurchaseOrder(purchaseorderMapper.purchaseOrder(purchaseOrderDTO));
             return ResponseEntity.status(201).build();
+        } catch (POConflictException e) {
+            return ResponseEntity.status(409).build();
+        } catch (InvalidSellerOrMaterialException e) {
+            return ResponseEntity.badRequest().build();
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-    //TODO ook hier statuscode teruggeven?
     @PostMapping("/complete")
-    public Map<String, Object> completePurchaseOrders(@RequestParam String sellerId, @RequestBody List<String> poNumbers) {
+    public ResponseEntity<Map<String, Object>> completePurchaseOrders(@RequestParam String sellerId, @RequestBody List<String> poNumbers) {
         List<String> errors = purchaseOrderService.completePurchaseOrders(UUID.fromString(sellerId), poNumbers);
-        return Map.of("errors", errors);
+        if (errors.isEmpty()) {
+            return ResponseEntity.ok(Map.of("errors", errors));
+        } else {
+            return ResponseEntity.status(400).body(Map.of("errors", errors));
+        }
     }
 
     @GetMapping("/open")
