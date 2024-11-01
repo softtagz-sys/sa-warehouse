@@ -96,7 +96,7 @@ class PricingControllerTest {
                         .content("""
                                 {
                                   "newPrice": 4,
-                                  "validFrom": "2024-11-01T08:59:59"
+                                  "validFrom": "2025-11-01T08:59:59"
                                 }
                                 """));
 
@@ -106,7 +106,7 @@ class PricingControllerTest {
                         .content("""
                                 {
                                   "newPrice": 4,
-                                  "validFrom": "2024-10-31T12:00:00"
+                                  "validFrom": "2025-10-31T12:00:00"
                                 }
                                 """))
                 .andExpect(status().isConflict())
